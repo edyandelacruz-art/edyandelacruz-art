@@ -96,6 +96,16 @@ My work focuses on engineering end-to-end digital products: **specialized multi-
 
 ---
 
+## 🧰 Agent Toolbox
+
+I maintain a curated collection of external open-source projects that can extend AION and other agent workflows. The collection tracks **what each repository is good for, adoption priority, integration status, and safety constraints**.
+
+**[Open the Agent Toolbox →](./AGENT_TOOLBOX.md)**
+
+Current high-priority projects include `book-to-skill`, `open-notebook`, `no-ai-slop`, `i-have-adhd`, `OmniRoute`, and `Strix`.
+
+---
+
 ## Identity Palette
 
 <div align="center">
