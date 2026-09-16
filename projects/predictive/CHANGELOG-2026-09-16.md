@@ -8,59 +8,81 @@
 
 ## Infrastructure
 
-- Created a dedicated Supabase project: `Predictive` (`sa-east-1`).
+- Created dedicated Supabase project `Predictive` in `sa-east-1`.
 - Created core data schema for users, events, participants, predictions, markets, model versions, sources and sync runs.
 - Enabled RLS on exposed tables and verified security advisors.
 - Added foreign-key indexes identified by Supabase performance advisors.
-- Deployed Vercel project `predictive-sports`.
+- Created Vercel project `predictive-sports` during early deployment work.
+- Created Netlify project `predictive-sports-edyan` as the target static frontend because Supabase Edge serves HTML as `text/plain` under its gateway.
+- Exported a standalone Netlify SPA package (`index.html`, `_headers`, `_redirects`, `netlify.toml`).
 
 ## Live sports data
 
-- Added TheSportsDB fixture synchronization with real team badges when supplied by the source.
-- Added a second open sporting-events source to expand football coverage.
-- Scheduled synchronization every 30 minutes.
+- Added TheSportsDB fixture synchronization.
+- Added Sporting Events open fixtures source.
+- Scheduled event synchronization every 30 minutes.
 - Created read-only public event endpoint.
 - Added manual refresh endpoint.
-- Verified live agenda responses with real events and competitions.
+- Expanded TheSportsDB sync window beyond only the current day.
+- Added a team-asset cache in Supabase.
+- Added `enrich-team-assets` worker to resolve missing crests from TheSportsDB using strict identity matching and aliases.
+- Increased known football participant badges from 45 to 65 during the first three enrichment batches; enrichment continues on a scheduled job.
+- Added OpenFootball Clubs (CC0) as a team-identity/alias reference source.
 
 ## Predictive engine
 
 ### Football
-- Elo engine with home advantage.
-- Poisson score distribution.
-- Dixon-Coles compatible low-score architecture.
-- Monte Carlo simulations.
-- Independent markets: 1X2, over/under, BTTS and derived probabilities.
-- Historical schema for goals, shots, shots on target, corners and cards.
-- Rolling team form and attack/defense-strength schema.
-- Implemented historical ingestion for five major European leagues across three seasons using Football-Data.co.uk.
+
+- Loaded 7,384 historical matches across 11 European leagues.
+- Created 243 domestic team ratings and 594 global club Elo records.
+- `football-ensemble-v2.2`: domestic Elo + Poisson + Dixon-Coles + shrinkage.
+- `football-global-elo-v1`: cross-league global Elo model that does not directly mix domestic Elo scales.
+- Historical fields include goals, shots, shots on target, corners, yellow cards and red cards.
+- Added 220 team market profiles and 11 league market profiles.
+- Deployed `predict-football-markets` using historical team/opponent profiles with shrinkage.
+- Added advanced market families for:
+  - goals and team-goal lines;
+  - corners and team corners;
+  - yellow cards and red-card probabilities;
+  - total/team shots;
+  - total/team shots on target.
+- Total count markets use a Negative Binomial distribution when empirical league variance exceeds the mean; team count lines currently use Poisson.
+- Added model-derived fair decimal odds (`1 / p`) without bookmaker margin as a mathematical reference, not a recommendation.
+- Added immutable prediction snapshots and automatic evaluation infrastructure for Brier Score, Log Loss and accuracy.
+- Added `penaltyblog` (MIT) as a benchmark/reference implementation for Poisson and Dixon-Coles validation; it is not an opaque runtime dependency.
 
 ### Tennis
-- Defined global Elo and surface-specific Elo.
-- Defined serve/return feature set.
-- Added database schema for match-level service statistics, rankings, surface and player ratings.
-- Preserved provider abstraction because current free historical research data is non-commercially licensed.
 
-## AI
+- Loaded 8,482 unique ATP/WTA historical matches and 1,041 player ratings.
+- Added global Elo and hard/clay/grass Elo.
+- Added hold %, return %, first/second serve, form and recent workload.
+- Deployed `tennis-ensemble-v1` and Tennis Lab comparison UI.
+- Historical tennis research source remains explicitly non-commercial until replaced with a commercial/live provider.
 
-- Deployed `sports-chat` endpoint.
-- Added local analytical fallback so chat works without an external model key.
-- Prepared Gemini and Groq adapters for low-cost interactive chat.
-- Defined Antigravity as a separate deep-analysis agent path rather than the default chat model.
+## Deterministic analyst
+
+- Removed Gemini, Groq and Antigravity from the product path.
+- Replaced external LLM chat behavior with `predictive-engine`.
+- The chat now reads only structured model outputs and data already computed by Predictive.
+- Added intent-specific responses for result, goals, corners, cards, shots, shots on target, data quality and confidence.
+- Added a permanent chat surface inside the dashboard hero plus the floating analyst panel.
 
 ## UX / UI
 
 - Reworked the product direction from promotional mockup to dashboard/product UI.
 - Added date, sport, competition and status filtering.
-- Added real badge/art consumption from the sports data source.
-- Added event selection, model detail and integrated chat surfaces.
+- Added event selection and model detail.
+- Added hero analyst chat.
+- Added all-market expandable sections with expected counts, probabilities and mathematical fair odds.
+- Added badge cache/fallback behavior and stricter identity matching.
+- Added source cards for Supabase, TheSportsDB, Sporting Events, ATP/WTA research, penaltyblog and OpenFootball.
 - Adopted a dark product design direction inspired by shadcn `new-york`: consistent cards, one primary blue accent, compact data hierarchy and designed empty/loading states.
 
 ## Current next steps
 
-1. Complete historical football refresh and verify team ratings.
-2. Add model endpoint that enriches each scheduled football event with computed Elo/form/Poisson features.
-3. Complete tennis historical refresh for research mode and swap to API-Tennis for commercial use.
-4. Add model calibration tracking (Brier / Log Loss) using settled predictions.
-5. Connect a Gemini or Groq API key for external chat.
-6. Create a dedicated `predictive-sports` GitHub repository when repository-creation access is available and move this project snapshot there.
+1. Complete automated crest enrichment for the remaining football participants.
+2. Move the exported static SPA into a dedicated Predictive GitHub repository when repository-creation access is available and connect that repo to Netlify.
+3. Add live ATP/WTA player-vs-player fixtures from a provider with a usable production license.
+4. Add basketball historical data before exposing points/rebounds/assists markets; do not fabricate basketball probabilities from schedule-only data.
+5. Continue live calibration as settled matches accumulate.
+6. Extend market history to fouls, offsides and first-half stats when those fields are ingested consistently.
