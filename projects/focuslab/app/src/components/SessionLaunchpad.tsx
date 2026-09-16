@@ -9,7 +9,7 @@ type Props = {
   profile: LearnerProfile;
   initialGame: GameName;
   onBack: () => void;
-  onLaunch: (game: GameName, content: LearningContent) => void;
+  onLaunch: (game: GameName, skill: string, content: LearningContent) => void;
 };
 
 type GameCard = {
@@ -62,7 +62,7 @@ export default function SessionLaunchpad({ profile, initialGame, onBack, onLaunc
     try {
       const content = buildContentPackage({ title, text, sourceRef: sourceMode === 'youtube' ? sourceRef : undefined });
       setError('');
-      onLaunch(game, content);
+      onLaunch(game, skill, content);
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : 'No pudimos preparar la sesión.');
     }
