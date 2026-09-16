@@ -1,5 +1,6 @@
 export type PausePolicy = 'pause_all' | 'pause_content' | 'continue_all';
 export type TrainingMode = 'audio_focus' | 'visual_focus' | 'switch' | 'dual';
+export type TrainingCondition = 'baseline' | 'dual_task';
 
 export interface TrainingQuestion {
   id: string;
@@ -11,6 +12,7 @@ export interface TrainingQuestion {
 
 export interface LearningContent {
   id: string;
+  fingerprint: string;
   title: string;
   narration: string;
   sourceType: 'text' | 'youtube_reference' | 'youtube_transcript';
@@ -54,6 +56,8 @@ export interface SessionSummary {
   completedAt: string;
   game: GameName;
   mode: 'audio_focus';
+  condition: TrainingCondition;
+  skill: string;
   learningAccuracy: number;
   averageLatencyMs: number;
   gameScore: number;
@@ -62,6 +66,13 @@ export interface SessionSummary {
   finalLevel: number;
   pausePolicy: PausePolicy;
   contentId?: string;
+  contentFingerprint?: string;
   contentTitle?: string;
   sourceType?: LearningContent['sourceType'];
+}
+
+export interface DualTaskComparison {
+  baselineSessionId: string;
+  accuracyCostPoints: number;
+  latencyCostPercent: number | null;
 }
