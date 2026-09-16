@@ -69,6 +69,7 @@ export interface SessionSummary {
   contentFingerprint?: string;
   contentTitle?: string;
   sourceType?: LearningContent['sourceType'];
+  sourceRef?: string;
 }
 
 export interface DualTaskComparison {
