@@ -19,16 +19,18 @@
 - [ ] Mobile-specific high-fidelity states
 - [ ] Motion system
 
-## Phase 2 — Frontend MVP — 60%
+## Phase 2 — Frontend MVP — 72%
 - [x] Next.js application shell
 - [x] Product navigation
+- [x] Shared multi-game host
 - [x] Runner game
+- [x] Tetris game
+- [x] Road Dodge game
 - [x] Timed questions
 - [x] Pause-policy behavior
 - [x] Adaptive difficulty engine
+- [x] Session Setup passes selected game into Training Arena
 - [x] Results/progress UI shell
-- [ ] Implement Tetris
-- [ ] Implement Road Dodge
 - [ ] Implement Pong
 - [ ] Implement Snake
 - [ ] Implement Memory Grid
@@ -71,14 +73,20 @@ Current blocker: the Supabase organization already uses both free active project
 - [ ] Production deployment
 - [ ] Monitoring / error tracking
 
-## Next development target
+## Current development target
 
-**v0.4 — Multi-game engine + real persisted sessions**
+**v0.4-alpha — Multi-game engine**
 
-Priority order:
+Completed in this target:
+1. Shared game interface
+2. Runner integration
+3. Tetris integration
+4. Road Dodge integration
+5. Game selection wired from Session Setup to Training Arena
+
+Next:
 1. Dedicated repository / deployment path
 2. Supabase slot or paid project availability
-3. Shared game interface
-4. Tetris + Road Dodge
-5. Persist training events
-6. Generate first real learner progress curve
+3. Persist training events
+4. Pong + Snake + Memory Grid
+5. Generate first real learner progress curve
