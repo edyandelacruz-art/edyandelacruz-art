@@ -38,7 +38,7 @@ FocusLab treats pause behavior as an experimental variable:
 - `pause_content`: academic audio pauses while the game continues.
 - `continue_all`: audio and game continue while the learner answers.
 
-Every response should record the active policy so comprehension is not confused with interference or dual-task cost.
+Every response records the active policy so comprehension is not confused with interference or dual-task cost.
 
 ## Core screens
 
@@ -47,7 +47,7 @@ Every response should record the active policy so comprehension is not confused 
 - Training Arena
 - Results
 - Progress
-- Profile
+- Profile (planned)
 
 ## Technology direction
 
@@ -62,17 +62,24 @@ Every response should record the active policy so comprehension is not confused 
 
 Figma: https://www.figma.com/design/VvK2nW8scKV7lHRd2gVP9f
 
-## Current state
+## Current build — v0.3
 
 - Product architecture defined
 - Six-game MVP scope defined
 - Eight-skill cognitive model defined
 - Adaptive pause/intensity model defined
-- Initial Next.js MVP built locally
-- Figma UX architecture created
-- Five core app screens under active high-fidelity design
-- Supabase project creation currently blocked by the free-plan active-project limit
-- Dedicated GitHub repository still to be initialized; this folder is the current GitHub source-of-truth record
+- High-fidelity Figma Home completed
+- High-fidelity Session Setup completed
+- High-fidelity Training Arena completed
+- High-fidelity Results completed
+- High-fidelity Progress completed
+- Next.js product shell implemented locally
+- Product navigation implemented locally
+- Runner training engine retained and connected to the product flow
+- Static TypeScript validation completed using local declaration shims because package installation is unavailable in the execution environment
+- Full dependency install / real Next.js production build still pending
+- Supabase project creation blocked by the free-plan active-project limit
+- Dedicated GitHub repository still to be initialized; this folder remains the temporary GitHub source-of-truth record
 
 ## Product principle
 
