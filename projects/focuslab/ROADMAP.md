@@ -20,13 +20,16 @@
 - [ ] Mobile-specific high-fidelity states
 - [ ] Motion system
 
-## Phase 2 — Frontend MVP — 78%
+## Phase 2 — Frontend MVP — 88%
 - [x] Next.js application shell
 - [x] Product navigation
 - [x] Shared multi-game host
-- [x] Runner game
-- [x] Tetris game
-- [x] Road Dodge game
+- [x] Runner
+- [x] Tetris
+- [x] Road Dodge
+- [x] Pong
+- [x] Snake
+- [x] Memory Grid
 - [x] Timed questions
 - [x] Pause-policy behavior
 - [x] Adaptive difficulty engine
@@ -34,9 +37,6 @@
 - [x] Results/progress UI shell
 - [x] Explore library
 - [x] Profile/calibration UI
-- [ ] Implement Pong
-- [ ] Implement Snake
-- [ ] Implement Memory Grid
 - [ ] Real content-source flow
 - [ ] Final production build validation
 
@@ -73,34 +73,39 @@ Current blocker: the Supabase organization already uses both free active project
 - [ ] Longitudinal skill trends
 - [ ] Teacher analytics dashboard
 
-## Phase 6 — Infrastructure — 20%
+## Phase 6 — Infrastructure — 25%
 - [x] GitHub project record
 - [x] GitHub public profile updated with real repositories
 - [x] Figma design source
+- [x] Deploy-ready local package prepared
 - [ ] Dedicated FocusLab GitHub repository
 - [ ] Vercel project connection
 - [ ] Preview deployment
 - [ ] Production deployment
 - [ ] Monitoring / error tracking
 
-## Current development target
+## Current build
 
-**v0.4-alpha — Multi-game + local persistence**
+**v0.4.0-alpha.3 — Complete six-game alpha runtime**
 
 Completed in this target:
 1. Seven-screen desktop UX system
 2. Shared game interface
-3. Runner integration
-4. Tetris integration
-5. Road Dodge integration
-6. Game selection wired from Session Setup to Training Arena
-7. Local session persistence adapter
-8. Dynamic result summary from actual session data
+3. Runner, Tetris, Road Dodge, Pong, Snake and Memory Grid
+4. Game selection wired from Session Setup to Training Arena
+5. Local session persistence adapter
+6. Dynamic result summary from actual session data
+7. Static TypeScript validation of the complete source
 
-Next:
-1. Dedicated repository / deployment path
-2. Supabase slot or paid project availability
-3. Pong + Snake + Memory Grid
-4. Real content ingestion
-5. Persist training events remotely
-6. Generate first validated learner load-threshold curve
+## Next development target
+
+**v0.5 — Real learning-content pipeline**
+
+Priority order:
+1. Source ingestion contract (YouTube/material)
+2. Transcript segmentation
+3. Grounded question generation and validation
+4. Supabase/auth when backend capacity is available
+5. First validated dual-task and switching-cost curves
+6. Mobile UX and motion system
+7. Production build/deployment validation
