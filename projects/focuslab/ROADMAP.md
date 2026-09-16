@@ -1,14 +1,19 @@
 # FocusLab Roadmap
 
-## Phase 0 — Product definition — COMPLETE
-- Product thesis
-- Six-game MVP scope
-- Eight cognitive skills
-- Pause-policy model
-- Learning vs cognitive score separation
-- Adaptive target zone
+## Overall audited development — 65%
 
-## Phase 1 — UX / UI foundation — 95%
+See [AUDIT_2026-09-16.md](./AUDIT_2026-09-16.md) for the weighted calculation, corrections and evidence behind this number.
+
+## Phase 0 — Product definition — 100%
+- [x] Product thesis
+- [x] Six-game MVP scope
+- [x] Eight cognitive skills
+- [x] Pause-policy model
+- [x] Learning vs cognitive-load measurement separation
+- [x] Adaptive target zone concept
+- [x] Baseline vs dual-task experimental framing
+
+## Phase 1 — UX / UI foundation — 88%
 - [x] UX architecture
 - [x] Home
 - [x] Session Setup
@@ -16,13 +21,13 @@
 - [x] Results
 - [x] Progress
 - [x] Explore
-- [x] Profile / calibration
+- [x] Profile / status
+- [x] Modernized local UI pass with simpler hierarchy and stronger empty states
+- [ ] Mirror the latest v0.6 UI changes back into Figma
 - [ ] Mobile-specific high-fidelity states
 - [ ] Motion system
 
-The seven-screen desktop system is complete in Figma. Mobile-specific states and motion remain the main design tasks.
-
-## Phase 2 — Frontend MVP — 96%
+## Phase 2 — Frontend MVP — 92%
 - [x] Next.js application shell
 - [x] Product navigation
 - [x] Shared multi-game host
@@ -35,15 +40,15 @@ The seven-screen desktop system is complete in Figma. Mobile-specific states and
 - [x] Timed questions
 - [x] Pause-policy behavior
 - [x] Adaptive difficulty engine
-- [x] Session Setup passes selected game into Training Arena
 - [x] Editable source-text input
 - [x] Prepared content passes into Training Arena
-- [x] Results/progress UI shell
-- [x] Explore library
-- [x] Profile/calibration UI
-- [x] Remote production-style build completed through AppDeploy
-- [x] Public alpha deployed and QA-clean
-- [ ] Replace remaining demonstration analytics with validated session-derived metrics
+- [x] Results / Progress / Explore / Profile
+- [x] Baseline training condition
+- [x] Local persistence
+- [x] Session-derived Home and Progress metrics
+- [x] Misleading decorative analytics removed
+- [ ] Sync v0.6 source to the public alpha snapshot
+- [ ] Full production-path regression test after that sync
 
 ## Phase 3 — Backend & identity — 30%
 - [x] Initial Supabase schema drafted
@@ -56,81 +61,93 @@ The seven-screen desktop system is complete in Figma. Mobile-specific states and
 - [ ] Student cognitive profile persistence
 - [ ] Teacher / admin role model
 
-Current blocker: the Supabase organization already uses both free active project slots. Existing projects are not being paused automatically because that could interrupt other applications.
+Current blocker: both free Supabase active-project slots are occupied by existing projects.
 
-## Phase 4 — Content intelligence — 38%
+## Phase 4 — Content intelligence — 40%
 - [x] Generic text-source ingestion contract
 - [x] Text normalization and sentence segmentation
 - [x] Local source-grounded cloze question generation
+- [x] Content fingerprinting
 - [x] Source identity stored with session summary
+- [x] YouTube URL stored explicitly as `youtube_reference` metadata
 - [ ] Direct YouTube transcript retrieval
 - [ ] AI semantic concept extraction
 - [ ] AI semantic question generation
 - [ ] Source-grounded semantic validation
 - [ ] Difficulty calibration by question complexity
 
-The current local generator is intentionally simple and traceable. It is an alpha fallback, not a replacement for the planned semantic AI pipeline.
+The current local generator is intentionally simple and traceable. It is an alpha fallback, not the planned semantic AI layer.
 
-## Phase 5 — Analytics — 22%
+## Phase 5 — Analytics / research validity — 48%
 - [x] Metric model defined
 - [x] Session summary model
-- [x] Learning accuracy captured from real session responses
+- [x] Learning accuracy captured
 - [x] Response latency captured
 - [x] Game score / collision metrics captured
-- [ ] Baseline condition for valid dual-task comparison
-- [ ] Validated dual-task cost computation
-- [ ] Switching cost computation
-- [ ] Load threshold curve from persisted sessions
-- [ ] Longitudinal skill trends
-- [ ] Teacher analytics dashboard
+- [x] Baseline condition implemented
+- [x] Content fingerprint used to match baseline and dual-task sessions
+- [x] Dual-task accuracy cost computed only when matched baseline exists
+- [x] Dual-task latency cost computed only when matched baseline exists
+- [x] Session-derived per-skill accuracy
+- [x] Session-derived per-final-level accuracy
+- [ ] Switching-cost protocol
+- [ ] Delayed recall protocol
+- [ ] Transfer-test protocol
+- [ ] Full within-session load-threshold model
+- [ ] Longitudinal learner trends in cloud storage
+- [ ] Teacher/class analytics dashboard
+- [ ] Empirical validation of composite interpretation rules
 
-This is the current development focus: replace decorative/illustrative analytics with measurements computed from matched baseline and dual-task sessions.
+Important audit change: unvalidated `Focus Index` and `Cognitive score` composites were removed from the v0.6 local UI.
 
-## Phase 6 — Infrastructure — 50%
+## Phase 6 — Infrastructure / release — 55%
 - [x] GitHub project record
-- [x] GitHub public profile updated with real repositories
+- [x] GitHub public profile updated
 - [x] Figma design source
-- [x] Deploy-ready package prepared
+- [x] Deploy-ready package
 - [x] Public alpha preview deployed
 - [x] Remote build validation completed
-- [x] Deployment QA reports no frontend/backend errors
+- [x] Deployment QA currently reports no frontend, backend or network errors
 - [ ] Dedicated FocusLab GitHub repository
-- [ ] Vercel project connection / production host
+- [ ] Push current source tree to that dedicated repository
+- [ ] Vercel production project connection
 - [ ] Supabase backend capacity
 - [ ] Production monitoring / error tracking
 
-Current public alpha: https://focuslab-3x5ppr.v2.appdeploy.ai/
+Public alpha: https://focuslab-3x5ppr.v2.appdeploy.ai/
 
-The alpha is running on AppDeploy for rapid QA. Vercel remains the intended production hosting target, but the current Vercel connector does not expose a usable workspace/project path in this chat.
+The alpha is online, but the latest v0.6 local source is ahead of the currently applied deployment snapshot.
 
-## Current build
+## Current local build
 
-**v0.5.0-alpha.2 — Six-game runtime + real text-content path + public preview**
+**v0.6 — modern UI + honest analytics + baseline comparison**
 
 Completed in this target:
-1. Seven-screen desktop UX system
+1. Seven-screen product shell
 2. Six-game shared runtime
-3. Game selection wired from Session Setup to Training Arena
-4. Local session persistence adapter
-5. Dynamic result summary from actual session data
-6. Editable learning text source
-7. Source segmentation and local grounded-question generation
-8. Source identity retained in session traceability
-9. Public alpha build and deployment
-10. Clean automated deployment QA
+3. Editable learning content flow
+4. Local question generation
+5. Baseline condition
+6. Matched baseline vs dual-task comparison
+7. Session-derived progress
+8. Honest empty states when data is missing
+9. Removal of arbitrary Focus Index and Cognitive score presentation
+10. Removal of unconnected starting-load control
+11. Removal of unenforced fixed-duration claim
+12. Explicit distinction between YouTube reference and actual transcript
 
 ## Next development target
 
-**v0.6 — Validated analytics + semantic content**
+**v0.7 — validated measurement + semantic content**
 
 Priority order:
-1. Baseline training condition
-2. Matched baseline vs dual-task cost computation
-3. Session-derived progress curves
-4. Switching-cost analytics
-5. YouTube transcript/provider adapter
-6. Semantic concept/question provider interface
-7. Source-grounded question validation
-8. Supabase/auth when backend capacity is available
+1. Sync v0.6 to public alpha and re-run QA
+2. Switching-cost protocol
+3. Delayed recall protocol
+4. YouTube transcript/provider adapter
+5. Semantic concept/question provider interface
+6. Source-grounded semantic validation
+7. Dedicated GitHub repository
+8. Supabase/auth when capacity is available
 9. Mobile UX + motion
 10. Vercel production path
