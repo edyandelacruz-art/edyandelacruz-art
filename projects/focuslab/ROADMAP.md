@@ -20,9 +20,9 @@
 - [ ] Mobile-specific high-fidelity states
 - [ ] Motion system
 
-Figma note: the seven-screen desktop system is complete. The Starter-plan MCP call limit was reached before the newest source-ingestion copy could be mirrored into Session Setup.
+The seven-screen desktop system is complete in Figma. Mobile-specific states and motion remain the main design tasks.
 
-## Phase 2 — Frontend MVP — 92%
+## Phase 2 — Frontend MVP — 96%
 - [x] Next.js application shell
 - [x] Product navigation
 - [x] Shared multi-game host
@@ -41,7 +41,9 @@ Figma note: the seven-screen desktop system is complete. The Starter-plan MCP ca
 - [x] Results/progress UI shell
 - [x] Explore library
 - [x] Profile/calibration UI
-- [ ] Final production build validation
+- [x] Remote production-style build completed through AppDeploy
+- [x] Public alpha deployed and QA-clean
+- [ ] Replace remaining demonstration analytics with validated session-derived metrics
 
 ## Phase 3 — Backend & identity — 30%
 - [x] Initial Supabase schema drafted
@@ -75,28 +77,35 @@ The current local generator is intentionally simple and traceable. It is an alph
 - [x] Learning accuracy captured from real session responses
 - [x] Response latency captured
 - [x] Game score / collision metrics captured
+- [ ] Baseline condition for valid dual-task comparison
 - [ ] Validated dual-task cost computation
 - [ ] Switching cost computation
 - [ ] Load threshold curve from persisted sessions
 - [ ] Longitudinal skill trends
 - [ ] Teacher analytics dashboard
 
-## Phase 6 — Infrastructure — 25%
+This is the current development focus: replace decorative/illustrative analytics with measurements computed from matched baseline and dual-task sessions.
+
+## Phase 6 — Infrastructure — 50%
 - [x] GitHub project record
 - [x] GitHub public profile updated with real repositories
 - [x] Figma design source
-- [x] Deploy-ready local package prepared
+- [x] Deploy-ready package prepared
+- [x] Public alpha preview deployed
+- [x] Remote build validation completed
+- [x] Deployment QA reports no frontend/backend errors
 - [ ] Dedicated FocusLab GitHub repository
-- [ ] Vercel project connection
-- [ ] Preview deployment
-- [ ] Production deployment
-- [ ] Monitoring / error tracking
+- [ ] Vercel project connection / production host
+- [ ] Supabase backend capacity
+- [ ] Production monitoring / error tracking
 
-Infrastructure blockers are external to the source code: repository creation is not exposed by the current GitHub connector; Vercel's deploy action currently rejects calls because its surfaced tool contract does not match its runtime input contract.
+Current public alpha: https://focuslab-3x5ppr.v2.appdeploy.ai/
+
+The alpha is running on AppDeploy for rapid QA. Vercel remains the intended production hosting target, but the current Vercel connector does not expose a usable workspace/project path in this chat.
 
 ## Current build
 
-**v0.5.0-alpha.1 — Six-game runtime + real text-content path**
+**v0.5.0-alpha.2 — Six-game runtime + real text-content path + public preview**
 
 Completed in this target:
 1. Seven-screen desktop UX system
@@ -107,18 +116,21 @@ Completed in this target:
 6. Editable learning text source
 7. Source segmentation and local grounded-question generation
 8. Source identity retained in session traceability
-9. Static TypeScript validation of the complete current source
+9. Public alpha build and deployment
+10. Clean automated deployment QA
 
 ## Next development target
 
-**v0.6 — Semantic content + validated analytics**
+**v0.6 — Validated analytics + semantic content**
 
 Priority order:
-1. YouTube transcript/provider adapter
-2. Semantic concept/question provider interface
-3. Source-grounded question validation
-4. Valid dual-task cost baseline/comparison logic
-5. Switching-cost analytics
-6. Supabase/auth when backend capacity is available
-7. Mobile UX + motion
-8. Production build/deployment validation
+1. Baseline training condition
+2. Matched baseline vs dual-task cost computation
+3. Session-derived progress curves
+4. Switching-cost analytics
+5. YouTube transcript/provider adapter
+6. Semantic concept/question provider interface
+7. Source-grounded question validation
+8. Supabase/auth when backend capacity is available
+9. Mobile UX + motion
+10. Vercel production path
