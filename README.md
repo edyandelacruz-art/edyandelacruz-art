@@ -39,6 +39,18 @@ Design source: [FocusLab UI/UX System in Figma](https://www.figma.com/design/VvK
 
 ---
 
+## Current Build: Predictive
+
+> **Predictive** is a live multi-sport analytics platform that combines continuously refreshed sports data with reproducible probabilistic models and explainable AI.
+
+The current backend includes real fixture synchronization, a football engine based on Elo + Poisson/Dixon-Coles with small-sample shrinkage, ATP/WTA research models with global and surface-specific Elo, and an integrated conversational analysis layer.
+
+**[Open the Predictive project record →](./projects/predictive/README.md)**
+
+Live deployment: [predictive-sports-edyan.vercel.app](https://predictive-sports-edyan.vercel.app)
+
+---
+
 ## What I'm Building
 
 ### Applied AI & Multi-Agent Architectures
@@ -50,6 +62,7 @@ Design source: [FocusLab UI/UX System in Figma](https://www.figma.com/design/VvK
 - Full-stack web products and operational dashboards.
 - Authentication, structured persistence, analytics, and automated reporting.
 - Product systems spanning UX design, implementation, deployment, and iteration.
+- **Predictive**: live sports-data ingestion, probabilistic modeling, model auditability, and explainable sports analytics.
 
 ### Educational Technology
 - **BETCA**: academic operations, competency analytics, training, and evaluation workflows.
