@@ -11,9 +11,9 @@
 ![AION](https://img.shields.io/badge/AION-Ecosystem-5B4B8A?style=for-the-badge)
 ![Applied AI](https://img.shields.io/badge/Applied_AI-Developer-A78BFA?style=for-the-badge)
 ![Software](https://img.shields.io/badge/Software-Architect-78716C?style=for-the-badge)
-![Bioinformatics](https://img.shields.io/badge/Computational-Science-FAFAF9?style=for-the-badge&labelColor=5B4B8A)
+![EdTech](https://img.shields.io/badge/EdTech-Builder-22D3EE?style=for-the-badge)
 
-`Multi-Agent Systems` · `Python & TypeScript` · `Bioinformatics` · `EdTech` · `Automation` · `Domain Architecture`
+`Multi-Agent Systems` · `Python & TypeScript` · `EdTech` · `Automation` · `Computational Science` · `Product Design`
 
 </div>
 
@@ -21,30 +21,58 @@
 
 ## About
 
-I am **Edyan Enrique de la Cruz**, a biologist, applied AI developer, and technology builder working at the intersection of natural sciences, software engineering, computational biology, and educational technology.
+I am **Edyan Enrique de la Cruz**, an applied AI developer, educator, and technology builder working across software engineering, computational science, automation, and educational technology.
 
-My work focuses on engineering end-to-end digital products: **specialized multi-agent systems, context-aware AI orchestrators, automated operational pipelines, educational analytics platforms, and computational science workflows**.
+My work focuses on engineering end-to-end digital products: **specialized multi-agent systems, context-aware AI orchestrators, automated operational pipelines, educational analytics platforms, and computational workflows**.
+
+---
+
+## Current Build: FocusLab
+
+> **FocusLab** is an adaptive cognitive-learning platform designed to train how learners capture, filter, switch, retain, and recover academic information under controlled sensory and attentional load.
+
+The MVP combines six classic-game task environments with eight measurable cognitive skills, timed questions, adaptive intensity, and separate academic/cognitive performance metrics.
+
+**[Open the FocusLab product record →](./projects/focuslab/README.md)**
+
+Design source: [FocusLab UI/UX System in Figma](https://www.figma.com/design/VvK2nW8scKV7lHRd2gVP9f)
 
 ---
 
 ## What I'm Building
 
-### 🤖 Applied AI & Multi-Agent Architectures
-- **Hierarchical Multi-Agent Systems**: Supervisor-specialist agent trees with explicit memory scoping, permission boundaries, and audit logging.
-- **Context Orchestration & Memory Stores**: Persistent multi-domain facts, event buses, and unified ledger systems.
-- **Deterministic & LLM Hybrid Engines**: Combining structured domain databases with multi-modal LLMs for high-certainty reasoning.
+### Applied AI & Multi-Agent Architectures
+- Hierarchical supervisor-specialist agent systems with scoped memory and auditability.
+- Context orchestration, event-driven workflows, and persistent domain knowledge.
+- Deterministic + LLM hybrid engines for structured real-world execution.
 
-### 💻 Software & Product Development
-- **End-to-End Application Design**: Modular, workspace-isolated monorepos built with modern web and mobile stacks.
-- **Operational Automation**: Multi-channel intake (text, voice, vision, receipts) mapped to structured data transactions.
-- **Analytics & Reporting Engines**: Automated OpenXML spreadsheet generation, PDF synthesis, and multi-format data exports.
+### Software & Product Development
+- Full-stack web products and operational dashboards.
+- Authentication, structured persistence, analytics, and automated reporting.
+- Product systems spanning UX design, implementation, deployment, and iteration.
 
-### 🎓 Educational Technology (EdTech)
-- **BETCA Core**: Academic operations, competency analytics, question bank engineering, and automated evaluation systems.
-- **Plataforma Docente**: AI-assisted teacher preparation, student tracking, and adaptive assessment workflows.
+### Educational Technology
+- **BETCA**: academic operations, competency analytics, training, and evaluation workflows.
+- **AION Edu**: academic management and pedagogical automation.
+- **FocusLab**: adaptive attention and learning training through controlled cognitive load.
 
-### 🧬 Computational Science
-- **Phylogenetics & Bio-Pipelines**: Automated biological sequence analysis with Python/Biopython, NCBI Entrez, MAFFT, TrimAl, IQ-TREE2, and MEGA.
+### Computational Science
+- Reproducible biological sequence and phylogenetic analysis workflows using Python/Biopython, MAFFT, MEGA, and related tools.
+
+---
+
+## Active Repositories
+
+| Repository | Focus | Visibility |
+|---|---|---|
+| [proyecto-bitacora-aion](https://github.com/edyandelacruz-art/proyecto-bitacora-aion) | AION personal/operational intelligence experiments | Public |
+| [ui-ux-pro-max-skill](https://github.com/edyandelacruz-art/ui-ux-pro-max-skill) | UI/UX design skill tooling | Public |
+| [npxskillui](https://github.com/edyandelacruz-art/npxskillui) | UI skill tooling / experimentation | Public |
+| [playwright-cli](https://github.com/edyandelacruz-art/playwright-cli) | Browser automation tooling | Public |
+| [impeccable](https://github.com/edyandelacruz-art/impeccable) | External UI / product tooling research | Public |
+| [edyandelacruz-art](https://github.com/edyandelacruz-art/edyandelacruz-art) | Profile, architecture notes, project records | Public |
+
+Additional active product repositories are private and are intentionally not exposed from the public profile.
 
 ---
 
@@ -66,58 +94,25 @@ My work focuses on engineering end-to-end digital products: **specialized multi-
 └──────────────┘   └──────────────┘               └──────────────┘   └──────────────┘
 ```
 
-- **AION Core**: Master super-administrator orchestrating cross-application context, permissions, and agent runtimes.
-- **AION Aegis**: Intelligent personal bitácora, metabolic tracking, nutrition, circadian sleep, and life context engine.
-- **AION Edu**: Specialized platform for academic workflows, pedagogical agents, and evaluation systems.
-- **AION Ops**: Operational automation, project coordination, and workflow optimization.
-- **AION Studio**: Intelligent content synthesis and media production.
+---
+
+## Technology Stack
+
+- **Languages**: Python, TypeScript, JavaScript, HTML5, CSS3
+- **Web / Product**: React, Next.js, Vite, Canvas, responsive UI systems
+- **AI**: OpenAI / ChatGPT, Anthropic Claude, Google Gemini, multi-agent runtimes
+- **Data**: PostgreSQL, Supabase, JSON/CSV, OpenXML
+- **Science**: Python / Biopython, NCBI Entrez, MAFFT, MEGA, R
+- **DevOps**: Git, GitHub, Vercel, Google Cloud, Google Workspace
+- **Design / Agentic Development**: Figma, Google Antigravity, Cursor
 
 ---
 
-## Selected Projects
+## Agent Toolbox
 
-| Project | Area | Focus & Technology |
-|---|---|---|
-| **AION Aegis** | Applied AI & Well-being | Autonomous personal bitácora with 12 modules, 24-tab OpenXML contract, and multi-agent supervisors. |
-| **AION Core Router** | System Architecture | Domain intent resolution, agent dispatching, and append-only ledger audit trail. |
-| **BETCA Core** | Educational Technology | Academic evaluation, competence scoring, and automated assessment analytics. |
-| **Plataforma Docente** | EdTech & AI | AI-assisted question banks, diagnostic evaluation, and teacher preparation tools. |
-| **Computational Phylogenetics** | Computational Science | Reproducible sequence analysis pipeline for *Leptospira* using Biopython, MAFFT, TrimAl & IQ-TREE2. |
-
----
-
-## Technologies & Tools
-
-- **Core Languages & Runtimes**: Python, TypeScript, JavaScript, HTML5, CSS3.
-- **AI & Multi-Agent Frameworks**: Custom Agent Runtime Systems, LLM Integration (OpenAI / ChatGPT, Anthropic Claude, Google Gemini), Google Antigravity, Cursor.
-- **Computational Biology & Science**: Python / Biopython, NCBI Entrez, MAFFT, TrimAl, IQ-TREE2, MEGA, R.
-- **Databases & Persistence**: LocalStorage, JSON/CSV, OpenXML (ExcelJS), Structured Memory Stores.
-- **DevOps & Workspace**: Git, GitHub, GitHub CLI, Google Cloud, Google Workspace, Vite, npm monorepos.
-
----
-
-## 🧰 Agent Toolbox
-
-I maintain a curated collection of external open-source projects that can extend AION and other agent workflows. The collection tracks **what each repository is good for, adoption priority, integration status, and safety constraints**.
+I maintain a curated collection of external open-source projects that can extend AION and other agent workflows.
 
 **[Open the Agent Toolbox →](./AGENT_TOOLBOX.md)**
-
-Current high-priority projects include `book-to-skill`, `open-notebook`, `no-ai-slop`, `i-have-adhd`, `OmniRoute`, and `Strix`.
-
----
-
-## Identity Palette
-
-<div align="center">
-
-| Color | Hex | Role |
-|---|---|---|
-| **AION Violet** | `#5B4B8A` | Primary Brand Accent |
-| **AION Lavender** | `#A78BFA` | Luminous Focus & Highlights |
-| **Warm White** | `#FAFAF9` | Surface & Contrast Text |
-| **Neutral Grey** | `#78716C` | Secondary Text & Boundaries |
-
-</div>
 
 ---
 
