@@ -20,7 +20,9 @@
 - [ ] Mobile-specific high-fidelity states
 - [ ] Motion system
 
-## Phase 2 — Frontend MVP — 88%
+Figma note: the seven-screen desktop system is complete. The Starter-plan MCP call limit was reached before the newest source-ingestion copy could be mirrored into Session Setup.
+
+## Phase 2 — Frontend MVP — 92%
 - [x] Next.js application shell
 - [x] Product navigation
 - [x] Shared multi-game host
@@ -34,10 +36,11 @@
 - [x] Pause-policy behavior
 - [x] Adaptive difficulty engine
 - [x] Session Setup passes selected game into Training Arena
+- [x] Editable source-text input
+- [x] Prepared content passes into Training Arena
 - [x] Results/progress UI shell
 - [x] Explore library
 - [x] Profile/calibration UI
-- [ ] Real content-source flow
 - [ ] Final production build validation
 
 ## Phase 3 — Backend & identity — 30%
@@ -53,13 +56,18 @@
 
 Current blocker: the Supabase organization already uses both free active project slots. Existing projects are not being paused automatically because that could interrupt other applications.
 
-## Phase 4 — Content intelligence — 10%
-- [ ] YouTube/source ingestion
-- [ ] Transcript segmentation
-- [ ] Concept extraction
-- [ ] AI question generation
-- [ ] Difficulty calibration
-- [ ] Source-grounded question validation
+## Phase 4 — Content intelligence — 38%
+- [x] Generic text-source ingestion contract
+- [x] Text normalization and sentence segmentation
+- [x] Local source-grounded cloze question generation
+- [x] Source identity stored with session summary
+- [ ] Direct YouTube transcript retrieval
+- [ ] AI semantic concept extraction
+- [ ] AI semantic question generation
+- [ ] Source-grounded semantic validation
+- [ ] Difficulty calibration by question complexity
+
+The current local generator is intentionally simple and traceable. It is an alpha fallback, not a replacement for the planned semantic AI pipeline.
 
 ## Phase 5 — Analytics — 22%
 - [x] Metric model defined
@@ -84,28 +92,33 @@ Current blocker: the Supabase organization already uses both free active project
 - [ ] Production deployment
 - [ ] Monitoring / error tracking
 
+Infrastructure blockers are external to the source code: repository creation is not exposed by the current GitHub connector; Vercel's deploy action currently rejects calls because its surfaced tool contract does not match its runtime input contract.
+
 ## Current build
 
-**v0.4.0-alpha.3 — Complete six-game alpha runtime**
+**v0.5.0-alpha.1 — Six-game runtime + real text-content path**
 
 Completed in this target:
 1. Seven-screen desktop UX system
-2. Shared game interface
-3. Runner, Tetris, Road Dodge, Pong, Snake and Memory Grid
-4. Game selection wired from Session Setup to Training Arena
-5. Local session persistence adapter
-6. Dynamic result summary from actual session data
-7. Static TypeScript validation of the complete source
+2. Six-game shared runtime
+3. Game selection wired from Session Setup to Training Arena
+4. Local session persistence adapter
+5. Dynamic result summary from actual session data
+6. Editable learning text source
+7. Source segmentation and local grounded-question generation
+8. Source identity retained in session traceability
+9. Static TypeScript validation of the complete current source
 
 ## Next development target
 
-**v0.5 — Real learning-content pipeline**
+**v0.6 — Semantic content + validated analytics**
 
 Priority order:
-1. Source ingestion contract (YouTube/material)
-2. Transcript segmentation
-3. Grounded question generation and validation
-4. Supabase/auth when backend capacity is available
-5. First validated dual-task and switching-cost curves
-6. Mobile UX and motion system
-7. Production build/deployment validation
+1. YouTube transcript/provider adapter
+2. Semantic concept/question provider interface
+3. Source-grounded question validation
+4. Valid dual-task cost baseline/comparison logic
+5. Switching-cost analytics
+6. Supabase/auth when backend capacity is available
+7. Mobile UX + motion
+8. Production build/deployment validation
