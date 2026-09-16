@@ -10,11 +10,21 @@ Detailed audit: [AUDIT_2026-09-16.md](./AUDIT_2026-09-16.md)
 
 Roadmap: [ROADMAP.md](./ROADMAP.md)
 
+## Canonical product direction
+
+The approved visual mockups are now the official implementation target.
+
+- [FOCUSLAB_MASTER_SPEC.md](./FOCUSLAB_MASTER_SPEC.md) — complete product behavior and experience specification.
+- [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) — visual language, avatar system, bubbles, game HUD and mobile-first UI rules.
+- [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) — technical build order and migration plan for turning the mockups into the real product.
+
+The redesign target is intentionally different from the current alpha shell: simpler screens, avatar onboarding, contextual bubbles, stronger game-specific visuals and less dashboard-style information density.
+
 ## Public alpha
 
 https://focuslab-3x5ppr.v2.appdeploy.ai/
 
-The public alpha is online and its current QA reports no frontend, backend or network errors. The latest local v0.6 source is ahead of the currently applied public snapshot and is the next deployment target.
+The public alpha is online and its current QA reports no frontend, backend or network errors. The latest local v0.6 source is ahead of the currently applied public snapshot. The next implementation cycle will rebuild the interface toward the newly approved avatar/neon/game-companion design system before production hardening.
 
 ## Product thesis
 
@@ -29,7 +39,7 @@ FocusLab does not classify students as fixed visual or auditory learners. It mea
 5. Snake — planning and working memory
 6. Memory Grid — visual working memory and recall
 
-All six are implemented through a shared game-host contract.
+All six are implemented through a shared game-host contract. The next redesign cycle will migrate their presentation toward the approved game-specific visual references while preserving measurement events.
 
 ## Eight cognitive targets
 
@@ -94,10 +104,25 @@ Every response records the active policy.
 
 Figma: https://www.figma.com/design/VvK2nW8scKV7lHRd2gVP9f
 
+The Figma file remains useful as a design workspace, but the canonical approved redesign direction is now documented in the three specification files above.
+
+## Target implementation stack
+
+- Next.js / React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Motion
+- Phaser
+- Howler.js
+- Zustand
+- Supabase when backend capacity is available
+
 ## Infrastructure state
 
 - AppDeploy alpha: active.
 - GitHub project documentation: active.
+- Canonical master specification: active.
 - Dedicated FocusLab GitHub repository: pending.
 - Vercel production project: pending.
 - Supabase project/auth: pending due to current free-project capacity.
