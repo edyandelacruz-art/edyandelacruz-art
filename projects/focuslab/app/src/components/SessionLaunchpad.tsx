@@ -1,45 +1,67 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { GameName, LearningContent } from '@/types/training';
+import type { GameName, LearningContent, TrainingCondition } from '@/types/training';
 import { buildContentPackage } from '@/lib/contentEngine';
 import { avatarFor, type LearnerProfile } from '@/lib/profileStore';
+import { buildYouTubeSearchUrl, parseYouTubeVideo } from '@/lib/youtube';
 
 type Props = {
   profile: LearnerProfile;
   initialGame: GameName;
   onBack: () => void;
-  onLaunch: (game: GameName, skill: string, content: LearningContent) => void;
+  onLaunch: (params: {
+    game: GameName;
+    skill: string;
+    condition: TrainingCondition;
+    content: LearningContent;
+  }) => void;
 };
 
+type SkillOption = { value: string; label: string };
 type GameCard = {
   name: GameName;
-  eyebrow: string;
   title: string;
   description: string;
   skill: string;
   scene: 'runner' | 'tetris' | 'road' | 'pong' | 'snake' | 'memory';
 };
 
-const GAME_CARDS: GameCard[] = [
-  { name: 'Runner', eyebrow: 'AUDIO + MOVIMIENTO', title: 'Runner', description: 'Corre, escucha y responde.', skill: 'Atención selectiva', scene: 'runner' },
-  { name: 'Tetris', eyebrow: 'ESPACIO + MEMORIA', title: 'Tetris', description: 'Organiza mientras mantienes información.', skill: 'Memoria de trabajo', scene: 'tetris' },
-  { name: 'Road Dodge', eyebrow: 'CONTROL + REACCIÓN', title: 'Road Dodge', description: 'Esquiva distractores y decide rápido.', skill: 'Control inhibitorio', scene: 'road' },
-  { name: 'Pong', eyebrow: 'TRACKING VISUAL', title: 'Pong', description: 'Sigue el objetivo sin perder la pregunta.', skill: 'Atención sostenida', scene: 'pong' },
-  { name: 'Snake', eyebrow: 'PLANEA + RECUERDA', title: 'Snake', description: 'Mantén la ruta y recupera información.', skill: 'Recuperación', scene: 'snake' },
-  { name: 'Memory Grid', eyebrow: 'MEMORIA VISUAL', title: 'Memory Grid', description: 'Observa patrones y repítelos.', skill: 'Memoria visual', scene: 'memory' },
+const SKILLS: SkillOption[] = [
+  { value: 'Selective attention', label: 'Atención selectiva' },
+  { value: 'Working memory', label: 'Memoria de trabajo' },
+  { value: 'Inhibitory control', label: 'Control inhibitorio' },
+  { value: 'Sustained attention', label: 'Atención sostenida' },
+  { value: 'Switching', label: 'Cambio atencional' },
+  { value: 'Recall', label: 'Recuperación' },
 ];
 
-const SKILLS = ['Atención selectiva', 'Memoria de trabajo', 'Control inhibitorio', 'Atención sostenida', 'Cambio atencional', 'Recuperación'];
-const DEFAULT_TEXT = 'Una célula eucariota funciona como un sistema coordinado. La membrana celular delimita la célula y regula el intercambio de sustancias con el entorno. Las mitocondrias transforman energía química y participan en la producción de ATP. El núcleo contiene la mayor parte del ADN y coordina muchas actividades mediante la expresión genética. Los ribosomas realizan la síntesis de proteínas. El aparato de Golgi modifica, clasifica y empaqueta proteínas y otras moléculas. Los lisosomas degradan materiales y ayudan al reciclaje celular. El citoesqueleto proporciona organización interna, forma y soporte para movimientos celulares.';
+const GAME_CARDS: GameCard[] = [
+  { name: 'Runner', title: 'Runner', description: 'Escucha mientras avanzas.', skill: 'Selective attention', scene: 'runner' },
+  { name: 'Tetris', title: 'Tetris', description: 'Planifica y conserva información.', skill: 'Working memory', scene: 'tetris' },
+  { name: 'Road Dodge', title: 'Road Dodge', description: 'Esquiva y controla impulsos.', skill: 'Inhibitory control', scene: 'road' },
+  { name: 'Pong', title: 'Pong', description: 'Sigue el objetivo sin perder el foco.', skill: 'Sustained attention', scene: 'pong' },
+  { name: 'Snake', title: 'Snake', description: 'Planifica y recupera información.', skill: 'Recall', scene: 'snake' },
+  { name: 'Memory Grid', title: 'Memory Grid', description: 'Observa y repite patrones.', skill: 'Working memory', scene: 'memory' },
+];
 
-function GameScene({ type }: { type: GameCard['scene'] }) {
-  if (type === 'runner') return <div className="launch-scene runner-scene"><i className="moon"/><i className="hill one"/><i className="hill two"/><i className="runner-character">●</i><i className="runner-obstacle"/><i className="runner-ground"/></div>;
-  if (type === 'tetris') return <div className="launch-scene tetris-scene"><div className="tetris-board">{Array.from({ length: 28 }).map((_, index) => <i key={index} className={index % 5 === 0 || index > 20 ? 'lit' : ''}/>)}</div><span className="next-piece"><i/><i/><i/></span></div>;
-  if (type === 'road') return <div className="launch-scene road-scene"><i className="road-horizon"/><i className="road-strip left"/><i className="road-strip right"/><i className="road-car"/><i className="road-block a"/><i className="road-block b"/></div>;
-  if (type === 'pong') return <div className="launch-scene pong-scene"><i className="pong-mid"/><i className="pong-paddle p1"/><i className="pong-paddle p2"/><i className="pong-ball"/></div>;
-  if (type === 'snake') return <div className="launch-scene snake-scene"><span className="snake-line">{[0,1,2,3,4,5].map(index => <i key={index}/>)}</span><i className="snake-fruit">●</i></div>;
-  return <div className="launch-scene memory-scene">{Array.from({ length: 16 }).map((_, index) => <i key={index} className={[2,5,9,10].includes(index) ? 'lit' : ''}/>)}</div>;
+function GameArt({ type }: { type: GameCard['scene'] }) {
+  if (type === 'runner') {
+    return <div className="lp-art lp-runner"><i className="lp-moon"/><i className="lp-hill a"/><i className="lp-hill b"/><i className="lp-runner-kid"/><i className="lp-runner-block"/></div>;
+  }
+  if (type === 'road') {
+    return <div className="lp-art lp-road"><i className="lp-road-sun"/><i className="lp-road-track"/><i className="lp-road-car"/><i className="lp-road-obstacle one"/><i className="lp-road-obstacle two"/></div>;
+  }
+  if (type === 'memory') {
+    return <div className="lp-art lp-memory">{Array.from({ length: 16 }).map((_, index) => <i key={index} className={[2,5,9,10].includes(index) ? 'hot' : ''}/>)}</div>;
+  }
+  if (type === 'tetris') {
+    return <div className="lp-art lp-tetris"><i className="b1"/><i className="b2"/><i className="b3"/><i className="b4"/><i className="b5"/><i className="b6"/></div>;
+  }
+  if (type === 'pong') {
+    return <div className="lp-art lp-pong"><i className="lp-midline"/><i className="lp-paddle left"/><i className="lp-paddle right"/><i className="lp-ball"/></div>;
+  }
+  return <div className="lp-art lp-snake"><i className="s1"/><i className="s2"/><i className="s3"/><i className="s4"/><i className="food"/></div>;
 }
 
 export default function SessionLaunchpad({ profile, initialGame, onBack, onLaunch }: Props) {
@@ -47,74 +69,198 @@ export default function SessionLaunchpad({ profile, initialGame, onBack, onLaunc
   const [game, setGame] = useState<GameName>(initialGame);
   const selected = useMemo(() => GAME_CARDS.find(item => item.name === game) ?? GAME_CARDS[0], [game]);
   const [skill, setSkill] = useState(selected.skill);
+  const [condition, setCondition] = useState<TrainingCondition>('dual_task');
   const [sourceMode, setSourceMode] = useState<'youtube' | 'text'>('youtube');
-  const [title, setTitle] = useState('Biología celular');
-  const [sourceRef, setSourceRef] = useState('');
-  const [text, setText] = useState(DEFAULT_TEXT);
+  const [youtubeInput, setYoutubeInput] = useState('');
+  const [title, setTitle] = useState('');
+  const [text, setText] = useState('');
   const [error, setError] = useState('');
+  const [pasteStatus, setPasteStatus] = useState('');
+
+  const youtubeVideo = useMemo(() => parseYouTubeVideo(youtubeInput), [youtubeInput]);
+  const selectedSkillLabel = SKILLS.find(item => item.value === skill)?.label ?? skill;
 
   const chooseGame = (item: GameCard) => {
     setGame(item.name);
     setSkill(item.skill);
+    setCondition('dual_task');
+  };
+
+  const searchYouTube = () => {
+    const query = youtubeInput.trim();
+    if (!query) {
+      setError('Escribe un tema para buscar o pega un enlace de YouTube.');
+      return;
+    }
+    if (youtubeVideo) {
+      window.open(youtubeVideo.canonicalUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    window.open(buildYouTubeSearchUrl(query), '_blank', 'noopener,noreferrer');
+  };
+
+  const pasteYouTube = async () => {
+    try {
+      const value = await navigator.clipboard.readText();
+      setYoutubeInput(value);
+      setPasteStatus(value ? 'Enlace pegado' : 'El portapapeles está vacío');
+      setError('');
+    } catch {
+      setPasteStatus('No pude leer el portapapeles. Pega el enlace manualmente.');
+    }
   };
 
   const start = () => {
     try {
-      const content = buildContentPackage({ title, text, sourceRef: sourceMode === 'youtube' ? sourceRef : undefined });
+      if (sourceMode === 'youtube' && !youtubeVideo) {
+        throw new Error('Vincula un video válido de YouTube antes de iniciar.');
+      }
+      const cleanText = text.trim();
+      if (!cleanText) {
+        throw new Error(sourceMode === 'youtube'
+          ? 'Pega la transcripción o un texto fiel al video para generar preguntas trazables.'
+          : 'Pega el contenido que quieres estudiar.');
+      }
+
+      const content = buildContentPackage({
+        title: title.trim() || (sourceMode === 'youtube' ? 'Sesión con YouTube' : 'Texto de estudio'),
+        text: cleanText,
+        sourceRef: sourceMode === 'youtube' ? youtubeVideo?.canonicalUrl : undefined,
+      });
       setError('');
-      onLaunch(game, skill, content);
+      onLaunch({ game, skill, condition, content });
     } catch (nextError) {
       setError(nextError instanceof Error ? nextError.message : 'No pudimos preparar la sesión.');
     }
   };
 
   return (
-    <main className="launchpad-page neo-page">
-      <div className="orb orb-a"/><div className="orb orb-b"/><div className="orb orb-c"/>
-      <header className="launchpad-top">
-        <button className="launch-back" type="button" onClick={onBack}>‹</button>
-        <div className="compact-brand launch-brand"><div className="neo-logo">◉</div><div><strong>Focus<span>Lab</span></strong><small>ELIGE TU MISIÓN</small></div></div>
-        <div className="launch-avatar"><span>{avatar.emoji}</span><small>{profile.name}</small></div>
+    <main className="launchpad-page">
+      <i className="launchpad-glow one"/><i className="launchpad-glow two"/>
+
+      <header className="launchpad-head">
+        <div>
+          <button type="button" className="launchpad-back" onClick={onBack}>‹ Inicio</button>
+          <span className="launchpad-kicker">NUEVA SESIÓN</span>
+          <h1>Elige qué estudiar y cómo entrenarlo.</h1>
+          <p>Dos decisiones claras. El resto lo organiza FocusLab.</p>
+        </div>
+        <div className="launchpad-companion">
+          <div className="launchpad-bubble">Primero la fuente. Después el juego.</div>
+          <span aria-label={avatar.name}>{avatar.emoji}</span>
+        </div>
       </header>
 
-      <section className="launchpad-intro">
-        <div><span className="neo-eyebrow">NUEVA SESIÓN</span><h1>¿Qué quieres entrenar hoy?</h1><p>Elige el contenido y después tu juego.</p></div>
-        <div className="companion-bubble launch-bubble"><span className="bubble-face">✦</span><p>Yo me encargo del resto.</p></div>
+      <section className="launchpad-source">
+        <div className="source-tabs" role="tablist" aria-label="Fuente de contenido">
+          <button type="button" className={sourceMode === 'youtube' ? 'active youtube' : ''} onClick={() => { setSourceMode('youtube'); setError(''); }}>▶ YouTube</button>
+          <button type="button" className={sourceMode === 'text' ? 'active' : ''} onClick={() => { setSourceMode('text'); setError(''); }}>Texto</button>
+        </div>
+
+        {sourceMode === 'youtube' ? (
+          <div className="youtube-source-card">
+            <div className="youtube-input-shell">
+              <span className="youtube-icon">▶</span>
+              <input
+                value={youtubeInput}
+                onChange={event => { setYoutubeInput(event.target.value); setPasteStatus(''); setError(''); }}
+                placeholder="Busca un tema o pega un enlace de YouTube"
+                aria-label="Buscar o pegar video de YouTube"
+              />
+              <div className="youtube-command-actions">
+                <button type="button" onClick={pasteYouTube}>Pegar</button>
+                <button type="button" className="primary" onClick={searchYouTube}>{youtubeVideo ? 'Abrir' : 'Buscar'}</button>
+              </div>
+            </div>
+            {pasteStatus && <p className="source-inline-status">{pasteStatus}</p>}
+
+            {youtubeVideo ? (
+              <div className="youtube-preview-card">
+                <div className="youtube-preview-frame">
+                  <iframe
+                    src={youtubeVideo.embedUrl}
+                    title="Vista previa del video enlazado"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+                <div className="youtube-preview-meta">
+                  <span>VIDEO ENLAZADO</span>
+                  <strong>{title.trim() || 'Video de YouTube'}</strong>
+                  <small>{youtubeVideo.canonicalUrl}</small>
+                  <div>
+                    <button type="button" onClick={() => window.open(youtubeVideo.canonicalUrl, '_blank', 'noopener,noreferrer')}>Abrir en YouTube</button>
+                    <button type="button" onClick={() => { setYoutubeInput(''); setPasteStatus(''); }}>Cambiar video</button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="youtube-empty-state">
+                <strong>{youtubeInput.trim() ? 'Todavía no es un enlace de video.' : 'Busca o pega un video.'}</strong>
+                <span>{youtubeInput.trim() ? 'Pulsa Buscar para abrir resultados en YouTube y luego pega el enlace elegido.' : 'FocusLab validará el enlace y mostrará el video antes de iniciar.'}</span>
+              </div>
+            )}
+
+            <div className="source-material-block">
+              <div className="source-material-heading">
+                <div><strong>Contenido para las preguntas</strong><span>Debe corresponder al video.</span></div>
+                <em>OBLIGATORIO</em>
+              </div>
+              <input className="launchpad-title-input" value={title} onChange={event => setTitle(event.target.value)} placeholder="Nombre de la sesión (opcional)"/>
+              <textarea className="launchpad-textarea" value={text} onChange={event => setText(event.target.value)} rows={5} placeholder="Pega aquí la transcripción o un texto fiel al video. FocusLab generará las preguntas únicamente desde este contenido."/>
+              <p className="source-honesty-note">El enlace queda asociado a la sesión. Hasta conectar un proveedor de transcript, FocusLab no inventará ni afirmará haber extraído automáticamente el contenido del video.</p>
+            </div>
+          </div>
+        ) : (
+          <div className="text-source-card">
+            <input className="launchpad-title-input" value={title} onChange={event => setTitle(event.target.value)} placeholder="Nombre de la sesión (opcional)"/>
+            <textarea className="launchpad-textarea" value={text} onChange={event => setText(event.target.value)} rows={8} placeholder="Pega aquí el contenido que quieres estudiar. FocusLab generará preguntas trazables desde este texto."/>
+          </div>
+        )}
+
+        {error && <p className="launchpad-error">{error}</p>}
       </section>
 
-      <section className="source-launch-card neo-glass">
-        <div className="source-launch-head">
-          <div><span className="launch-number">01</span><div><strong>Tu contenido</strong><small>Usa un video de YouTube o pega tu texto.</small></div></div>
-          <div className="source-mode-toggle"><button className={sourceMode === 'youtube' ? 'active' : ''} onClick={() => setSourceMode('youtube')}>▶ YouTube</button><button className={sourceMode === 'text' ? 'active' : ''} onClick={() => setSourceMode('text')}>✎ Texto</button></div>
+      <section className="launchpad-games">
+        <div className="launchpad-section-head">
+          <div><span>ELIGE TU MUNDO</span><h2>¿Con qué quieres entrenar?</h2></div>
+          <small>Seleccionado: {selected.title}</small>
         </div>
-        {sourceMode === 'youtube' && <div className="youtube-source-box"><div className="youtube-icon">▶</div><input value={sourceRef} onChange={(event: { target: { value: string } }) => setSourceRef(event.target.value)} placeholder="Pega aquí el enlace de YouTube" aria-label="Enlace de YouTube"/></div>}
-        <div className="content-fields compact-content-fields">
-          <input value={title} onChange={(event: { target: { value: string } }) => setTitle(event.target.value)} placeholder="Título de la sesión" aria-label="Título de la sesión"/>
-          <textarea value={text} onChange={(event: { target: { value: string } }) => setText(event.target.value)} rows={sourceMode === 'youtube' ? 3 : 5} aria-label="Texto de aprendizaje" placeholder={sourceMode === 'youtube' ? 'Pega el texto o transcripción que acompañará al video…' : 'Pega aquí el contenido que quieres estudiar…'}/>
-        </div>
-        {sourceMode === 'youtube' && <p className="source-note">El video queda vinculado como referencia. La transcripción automática todavía no está conectada.</p>}
-      </section>
-
-      <section className="game-pick-section">
-        <div className="game-pick-head"><span className="launch-number">02</span><div><strong>Elige tu juego</strong><small>Cada mundo entrena una carga distinta.</small></div></div>
-        <div className="visual-game-grid">
+        <div className="game-picker-grid">
           {GAME_CARDS.map(item => (
-            <button type="button" key={item.name} className={`visual-game-card ${game === item.name ? 'selected' : ''}`} onClick={() => chooseGame(item)}>
-              <GameScene type={item.scene}/>
-              <div className="visual-game-copy"><span>{item.eyebrow}</span><strong>{item.title}</strong><small>{item.description}</small></div>
+            <button type="button" key={item.name} className={`visual-game-card ${condition === 'dual_task' && game === item.name ? 'selected' : ''}`} onClick={() => chooseGame(item)}>
+              <GameArt type={item.scene}/>
+              <div className="visual-game-copy"><strong>{item.title}</strong><span>{item.description}</span></div>
               <i className="game-check">✓</i>
             </button>
           ))}
         </div>
       </section>
 
-      <section className="skill-strip neo-glass">
-        <div><span className="launch-number">03</span><strong>Habilidad</strong></div>
-        <div className="skill-pills">{SKILLS.map(item => <button type="button" key={item} className={skill === item ? 'active' : ''} onClick={() => setSkill(item)}>{item}</button>)}</div>
+      <section className="launchpad-options">
+        <div className="launchpad-option-group">
+          <span>HABILIDAD</span>
+          <div className="skill-chip-row">
+            {SKILLS.map(item => <button type="button" key={item.value} className={skill === item.value ? 'active' : ''} onClick={() => setSkill(item.value)}>{item.label}</button>)}
+          </div>
+        </div>
+        <div className="launchpad-option-group compact">
+          <span>CONDICIÓN</span>
+          <div className="condition-chip-row">
+            <button type="button" className={condition === 'dual_task' ? 'active' : ''} onClick={() => setCondition('dual_task')}>Con juego</button>
+            <button type="button" className={condition === 'baseline' ? 'active' : ''} onClick={() => setCondition('baseline')}>Baseline</button>
+          </div>
+        </div>
       </section>
 
-      {error && <p className="launch-error">{error}</p>}
-      <button className="neo-primary launch-main-cta" type="button" onClick={start}>Empezar con {selected.title} <span>→</span></button>
+      <div className="launchpad-dock">
+        <div className="launchpad-choice">
+          <span>{condition === 'baseline' ? 'BASELINE' : selected.title}</span>
+          <strong>{selectedSkillLabel}</strong>
+        </div>
+        <button className="launchpad-start" type="button" onClick={start}>{condition === 'baseline' ? 'Crear baseline' : 'Empezar'} <span>→</span></button>
+      </div>
     </main>
   );
 }
