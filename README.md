@@ -31,8 +31,9 @@ My work focuses on engineering end-to-end digital products: **specialized multi-
 
 > **FocusLab** is an adaptive cognitive-learning platform designed to train how learners capture, filter, switch, retain, and recover academic information under controlled sensory and attentional load.
 
-The MVP combines six classic-game task environments with eight measurable cognitive skills, timed questions, adaptive intensity, and separate academic/cognitive performance metrics.
+The MVP combines six classic-game task environments with eight measurable cognitive skills, timed questions, adaptive intensity, real source-grounded learning content, and separate academic/cognitive performance metrics.
 
+**[Launch the FocusLab public alpha →](https://focuslab-3x5ppr.v2.appdeploy.ai/)**  
 **[Open the FocusLab product record →](./projects/focuslab/README.md)**
 
 Design source: [FocusLab UI/UX System in Figma](https://www.figma.com/design/VvK2nW8scKV7lHRd2gVP9f)
