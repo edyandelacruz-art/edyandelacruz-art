@@ -114,6 +114,15 @@ function ResultsView({
         <span>RESULTADOS</span>
         <h1>{summary.game} · {summary.skill}</h1>
         <p>{summary.contentTitle}</p>
+        {summary.sourceRef && (
+          <button
+            type="button"
+            className="neo-secondary"
+            onClick={() => window.open(summary.sourceRef, '_blank', 'noopener,noreferrer')}
+          >
+            Abrir fuente ↗
+          </button>
+        )}
       </header>
 
       <section className="result-grid">
