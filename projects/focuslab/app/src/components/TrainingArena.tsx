@@ -164,6 +164,7 @@ export default function TrainingArena({
       contentFingerprint: content?.fingerprint,
       contentTitle,
       sourceType: content?.sourceType || 'text',
+      sourceRef: content?.sourceRef,
     };
     onExit?.(summary);
   };

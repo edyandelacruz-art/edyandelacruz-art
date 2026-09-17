@@ -1,0 +1,97 @@
+[
+  {
+    "name": "Complete onboarding and keep the learner identity",
+    "sanity": true,
+    "viewport": "mobile",
+    "covers": [
+      "avatar onboarding",
+      "learner profile persistence",
+      "Home entry point"
+    ],
+    "description": "Verifies the approved onboarding still creates a durable learner profile and reaches Home.",
+    "steps": [
+      "Choose Robot as the avatar",
+      "Enter QA Learner as the learner name and continue",
+      "Refresh the page"
+    ],
+    "expected": "Home still greets QA Learner with the saved profile and onboarding does not reappear."
+  },
+  {
+    "name": "Launch Tetris from the new text-content Launchpad",
+    "viewport": "desktop",
+    "covers": [
+      "new session Launchpad",
+      "text learning source",
+      "visual game selection",
+      "dual-task training arena",
+      "grounded question generation"
+    ],
+    "setup": [
+      "Complete onboarding as QA Learner using Robot"
+    ],
+    "description": "Verifies the redesigned mission flow can create a grounded text session and launch a selected visual game.",
+    "steps": [
+      "Choose Nueva sesión and select Texto",
+      "Enter the title Célula QA and paste a multi-sentence study text with at least eight informative sentences about cells, membranes, mitochondria, DNA, ribosomes, Golgi, lysosomes and homeostasis",
+      "Select Tetris and choose Empezar"
+    ],
+    "expected": "The training arena opens for Tetris, shows Célula QA as the content title, and preserves the learner profile."
+  },
+  {
+    "name": "Reject an invalid YouTube source",
+    "viewport": "mobile",
+    "covers": [
+      "YouTube source validation",
+      "invalid session guardrail",
+      "mobile Launchpad"
+    ],
+    "setup": [
+      "Complete onboarding as QA Learner using Robot"
+    ],
+    "description": "Verifies the Launchpad does not pretend a non-YouTube URL is a linked learning video.",
+    "steps": [
+      "Choose Nueva sesión and keep YouTube selected",
+      "Enter https://example.com/not-youtube in the YouTube field",
+      "Choose Empezar"
+    ],
+    "expected": "A visible validation message says a valid YouTube video must be linked before the session can start, and the training arena does not open."
+  },
+  {
+    "name": "Change the companion avatar without losing progress",
+    "viewport": "desktop",
+    "covers": [
+      "profile avatar change",
+      "profile persistence",
+      "non-destructive profile update"
+    ],
+    "setup": [
+      "Complete onboarding as QA Learner using Robot"
+    ],
+    "description": "Verifies an existing learner can change companion from Profile without recreating the account.",
+    "steps": [
+      "Open Perfil",
+      "Choose Zorro as Tu compañero",
+      "Refresh the page and open Perfil again"
+    ],
+    "expected": "QA Learner still exists and Zorro is shown as the selected companion after refresh."
+  },
+  {
+    "name": "Create a baseline session without the secondary game",
+    "viewport": "desktop",
+    "covers": [
+      "baseline condition",
+      "same-content measurement reference",
+      "training without visuomotor secondary task"
+    ],
+    "setup": [
+      "Complete onboarding as QA Learner using Robot"
+    ],
+    "description": "Verifies baseline remains available from the simplified Launchpad without exposing the old technical form.",
+    "steps": [
+      "Choose Nueva sesión and select Texto",
+      "Enter the title Baseline QA and paste a multi-sentence study text with at least eight informative sentences",
+      "Choose Baseline and then Crear baseline"
+    ],
+    "expected": "The training arena opens in BASELINE condition and states that the secondary visuomotor task is off."
+  }
+]

@@ -2,6 +2,19 @@
 
 FocusLab is an adaptive cognitive-learning platform that trains learners to capture, filter, switch, retain and recover academic information under controlled sensory and attentional load.
 
+## Mandatory execution policy
+
+**Quality is always more important than speed.**
+
+No FocusLab change may be called complete, merged, or deployed merely to show progress. Every meaningful change must be audited, implemented deliberately, validated, tested, visually reviewed when applicable, and checked against the approved product direction before release.
+
+Binding project rules:
+
+- [AGENTS.md](./AGENTS.md) — mandatory execution rules for any agent or developer touching FocusLab.
+- [QUALITY_GATE.md](./QUALITY_GATE.md) — required acceptance checklist before completion or deployment.
+
+A mediocre, rushed, visually unfaithful, weakly tested, or architecturally inconsistent result is not acceptable as a finished deliverable.
+
 ## Current audited status
 
 **Overall development: 65%**
@@ -24,7 +37,7 @@ The redesign target is intentionally different from the current alpha shell: sim
 
 https://focuslab-3x5ppr.v2.appdeploy.ai/
 
-The public alpha is online and its current QA reports no frontend, backend or network errors. The latest local v0.6 source is ahead of the currently applied public snapshot. The next implementation cycle will rebuild the interface toward the newly approved avatar/neon/game-companion design system before production hardening.
+The public alpha is intentionally kept on the last stable build while the v0.7.1 visual branch is audited and rebuilt. A visual branch is not deployed merely because it compiles; it must first pass the project quality gate.
 
 ## Product thesis
 
@@ -39,7 +52,7 @@ FocusLab does not classify students as fixed visual or auditory learners. It mea
 5. Snake — planning and working memory
 6. Memory Grid — visual working memory and recall
 
-All six are implemented through a shared game-host contract. The next redesign cycle will migrate their presentation toward the approved game-specific visual references while preserving measurement events.
+All six are implemented through a shared game-host contract. Their visual redesign must match the approved FocusLab game language before the visual work is considered complete.
 
 ## Eight cognitive targets
 
@@ -104,7 +117,7 @@ Every response records the active policy.
 
 Figma: https://www.figma.com/design/VvK2nW8scKV7lHRd2gVP9f
 
-The Figma file remains useful as a design workspace, but the canonical approved redesign direction is now documented in the three specification files above.
+The Figma file remains useful as a design workspace, but the canonical approved redesign direction is documented in the project specification files and enforced by the quality gate.
 
 ## Target implementation stack
 
@@ -120,9 +133,12 @@ The Figma file remains useful as a design workspace, but the canonical approved 
 
 ## Infrastructure state
 
-- AppDeploy alpha: active.
+- AppDeploy alpha: active and stable.
 - GitHub project documentation: active.
 - Canonical master specification: active.
+- Mandatory agent execution rules: active.
+- Quality gate: active.
+- v0.7.1 visual development branch: active.
 - Dedicated FocusLab GitHub repository: pending.
 - Vercel production project: pending.
 - Supabase project/auth: pending due to current free-project capacity.
@@ -130,4 +146,4 @@ The Figma file remains useful as a design workspace, but the canonical approved 
 
 ## Product principle
 
-**Content first. Game second. Measurement always visible — and only when the data really exists.**
+**Content first. Game second. Measurement only when the data really exists. Quality before speed.**
