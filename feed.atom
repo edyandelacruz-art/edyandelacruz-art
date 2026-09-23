@@ -5,8 +5,16 @@
   <link href="https://simonw.github.io/claude-system-prompts/feed.atom" rel="self" type="application/atom+xml"/>
   <link href="https://github.com/simonw/claude-system-prompts" rel="alternate" type="text/html"/>
   <id>https://simonw.github.io/claude-system-prompts/</id>
-  <updated>2026-09-01T12:00:00Z</updated>
+  <updated>2026-09-22T12:00:00Z</updated>
   <author><name>Anthropic, via simonw/claude-system-prompts</name></author>
+  <entry>
+    <title>Opus 5 → Opus 5.5 on Sep 22, 2026</title>
+    <link href="https://github.com/simonw/claude-system-prompts/blob/main/CHANGELOG.md#2026-09-22-claude-opus-55" rel="alternate" type="text/html"/>
+    <id>https://github.com/simonw/claude-system-prompts/blob/main/prompts/claude-opus-5-5-2026-09-22.md</id>
+    <updated>2026-09-22T12:00:00Z</updated>
+    <published>2026-09-22T12:00:00Z</published>
+    <content type="html">&lt;p&gt;&lt;strong&gt;Compared with Opus 5&lt;/strong&gt; · &lt;a href=&quot;https://github.com/simonw/claude-system-prompts/commit/81436d252b4d0c0e408932f53c71c4d6e810f026&quot;&gt;diff&lt;/a&gt;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Claude now refuses reproducing text and visual works, including known characters in generated drawings, and must offer unrelated originals without explaining how to close the gap.&lt;/li&gt;&lt;li&gt;It adds illegal-drug guidance: provide overdose and interaction information, but refuse dosing, timing, administration, or combination protocols and direct people to harm-reduction sources.&lt;/li&gt;&lt;li&gt;Borderline requests now get one question about actual potential harm before proceeding, replacing automatic refusal or questions about the person’s motives or certainty.&lt;/li&gt;&lt;li&gt;Child-safety guidance adds pattern-level education and forbids explaining detection mechanics, while dropping the explicit self-sexualization rule requiring continued refusals afterward.&lt;/li&gt;&lt;li&gt;The prompt removes the Fable-to-Opus safeguards-routing notice and broad “defaults to helping” stance, while also softening explicit crisis-prioritization and diagnostic disclaimers.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/simonw/claude-system-prompts/blob/main/prompts/claude-opus-5-5-2026-09-22.md&quot;&gt;Full prompt&lt;/a&gt;&lt;/p&gt;</content>
+  </entry>
   <entry>
     <title>Fable 5 → Fable 5.1 on Sep 1, 2026</title>
     <link href="https://github.com/simonw/claude-system-prompts/blob/main/CHANGELOG.md#2026-09-01-claude-fable-51" rel="alternate" type="text/html"/>
