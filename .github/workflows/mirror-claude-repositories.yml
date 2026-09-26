@@ -1,0 +1,49 @@
+name: Mirror Claude repositories
+
+on:
+  push:
+    branches:
+      - mirror-bootstrap
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Mirror upstream repositories into namespaced branches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEST_REPO: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          mirror_repo() {
+            local src="$1"
+            local prefix="$2"
+            local workdir
+            workdir="$(mktemp -d)"
+
+            git clone --mirror "$src" "$workdir/repo.git"
+            cd "$workdir/repo.git"
+            git remote add destination "https://x-access-token:${GH_TOKEN}@github.com/${DEST_REPO}.git"
+
+            while IFS= read -r ref; do
+              branch="${ref#refs/heads/}"
+              git push --force destination "${ref}:refs/heads/${prefix}/${branch}"
+            done < <(git for-each-ref --format='%(refname)' refs/heads)
+
+            while IFS= read -r ref; do
+              tag="${ref#refs/tags/}"
+              git push --force destination "${ref}:refs/tags/${prefix}/${tag}"
+            done < <(git for-each-ref --format='%(refname)' refs/tags)
+          }
+
+          mirror_repo "https://github.com/asgeirtj/system_prompts_leaks.git" "mirror-system-prompts-leaks"
+          mirror_repo "https://github.com/simonw/claude-system-prompts.git" "mirror-claude-system-prompts"
