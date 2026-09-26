@@ -24,26 +24,34 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          mirror_repo() {
+          mirror_exact() {
             local src="$1"
-            local prefix="$2"
+            local dest_branch="$2"
             local workdir
             workdir="$(mktemp -d)"
-
-            git clone --mirror "$src" "$workdir/repo.git"
-            cd "$workdir/repo.git"
+            git clone "$src" "$workdir/repo"
+            cd "$workdir/repo"
             git remote add destination "https://x-access-token:${GH_TOKEN}@github.com/${DEST_REPO}.git"
-
-            while IFS= read -r ref; do
-              branch="${ref#refs/heads/}"
-              git push --force destination "${ref}:refs/heads/${prefix}/${branch}"
-            done < <(git for-each-ref --format='%(refname)' refs/heads)
-
-            while IFS= read -r ref; do
-              tag="${ref#refs/tags/}"
-              git push --force destination "${ref}:refs/tags/${prefix}/${tag}"
-            done < <(git for-each-ref --format='%(refname)' refs/tags)
+            git push --force destination "HEAD:refs/heads/${dest_branch}"
           }
 
-          mirror_repo "https://github.com/asgeirtj/system_prompts_leaks.git" "mirror-system-prompts-leaks"
-          mirror_repo "https://github.com/simonw/claude-system-prompts.git" "mirror-claude-system-prompts"
+          mirror_without_workflows() {
+            local src="$1"
+            local dest_branch="$2"
+            local workdir
+            workdir="$(mktemp -d)"
+            git clone "$src" "$workdir/repo"
+            cd "$workdir/repo"
+            git remote add destination "https://x-access-token:${GH_TOKEN}@github.com/${DEST_REPO}.git"
+
+            if [ -d .github/workflows ]; then
+              rm -rf .github/workflows
+              git add -A
+              git commit -m "Mirror transport: workflows restored separately"
+            fi
+
+            git push --force destination "HEAD:refs/heads/${dest_branch}"
+          }
+
+          mirror_exact "https://github.com/asgeirtj/system_prompts_leaks.git" "mirror-system-prompts-leaks/main"
+          mirror_without_workflows "https://github.com/simonw/claude-system-prompts.git" "mirror-claude-system-prompts/main"
