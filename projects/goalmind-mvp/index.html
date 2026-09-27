@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#07111d" />
+  <meta name="description" content="GoalMind: aprende respondiendo preguntas con tiros al arco." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>GoalMind — Demo</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button class="brand" data-nav="home" aria-label="Ir al inicio">
+        <span class="brand-mark" aria-hidden="true">GM</span>
+        <span class="brand-copy"><b>GoalMind</b><small>learn • shoot • score</small></span>
+      </button>
+      <button class="icon-btn" id="soundToggle" aria-label="Activar o silenciar sonido">◖</button>
+    </header>
+
+    <main id="app" aria-live="polite"></main>
+
+    <nav class="bottom-nav" aria-label="Navegación principal">
+      <button data-nav="home" class="nav-item is-active"><span>⌂</span><small>Inicio</small></button>
+      <button data-nav="play" class="nav-item"><span>⚽</span><small>Jugar</small></button>
+      <button data-nav="teacher" class="nav-item"><span>▤</span><small>Docente</small></button>
+      <button data-nav="profile" class="nav-item"><span>◎</span><small>Progreso</small></button>
+    </nav>
+  </div>
+
+  <template id="goalTemplate">
+    <section class="game-wrap">
+      <div class="game-hud">
+        <div><small>MARCADOR</small><strong id="hudScore">0</strong></div>
+        <div class="hud-center"><small>PREGUNTA</small><strong id="hudQuestion">1/5</strong></div>
+        <div class="streak"><small>RACHA</small><strong id="hudStreak">×1</strong></div>
+      </div>
+
+      <div class="question-panel">
+        <div class="question-meta"><span id="gameSubject">Historia</span><span id="gameDifficulty">Intermedio</span></div>
+        <h1 id="questionText"></h1>
+        <div class="timer-track" aria-label="Tiempo restante"><div id="timerFill"></div></div>
+        <div class="timer-copy"><b id="timerText">8.0</b><span>segundos</span></div>
+      </div>
+
+      <div class="pitch" id="pitch">
+        <div class="stadium-lights" aria-hidden="true"></div>
+        <div class="goal" aria-label="Portería con cuatro zonas de respuesta">
+          <div class="net"></div>
+          <button class="answer-zone zone-a" data-answer="0"><b>A</b><span></span></button>
+          <button class="answer-zone zone-b" data-answer="1"><b>B</b><span></span></button>
+          <button class="answer-zone zone-c" data-answer="2"><b>C</b><span></span></button>
+          <button class="answer-zone zone-d" data-answer="3"><b>D</b><span></span></button>
+          <div class="keeper" id="keeper" aria-hidden="true"><div class="keeper-head"></div><div class="keeper-body"></div><div class="keeper-arms"></div></div>
+        </div>
+        <div class="ball" id="ball" aria-hidden="true">⚽</div>
+        <div class="shot-feedback" id="shotFeedback"></div>
+      </div>
+
+      <p class="hint">Toca una zona del arco · también puedes usar A, B, C o D</p>
+    </section>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

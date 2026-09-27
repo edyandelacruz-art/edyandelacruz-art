@@ -22,6 +22,16 @@ Colección curada de repositorios externos que pueden integrarse con AION, BETCA
 | [every-app/open-seo](https://github.com/every-app/open-seo) | SEO, keywords, backlinks, auditorías y MCP | **Integrar en marketing cuando haya necesidad** |
 | [MadsLorentzen/ai-job-search](https://github.com/MadsLorentzen/ai-job-search) | Workflow de búsqueda de empleo, CV, cartas, ranking e entrevistas | **Reutilizar patrones y adaptar portales** |
 
+## Product design / UI–UX–CX
+
+| Repositorio | Uso | Estado |
+|---|---|---|
+| [edyandelacruz-art/ui-ux-pro-max-skill](https://github.com/edyandelacruz-art/ui-ux-pro-max-skill) | Inteligencia de diseño, patrones, accesibilidad, responsive y arquitectura de tokens | **Activo en GoalMind** |
+| [edyandelacruz-art/impeccable](https://github.com/edyandelacruz-art/impeccable) | Shape, critique, audit, polish y detección de patrones genéricos de UI | **Activo como workflow de calidad** |
+| [edyandelacruz-art/npxskillui](https://github.com/edyandelacruz-art/npxskillui) | Extraer sistemas visuales reutilizables desde URL, repositorio o código local | **Activo bajo demanda** |
+| [JacobLinCool/ux-discovery-interviewer-skill](https://github.com/JacobLinCool/ux-discovery-interviewer-skill) | Discovery, user journey, pain points, oportunidades y supuestos | **Activo en GoalMind** |
+| [edyandelacruz-art/playwright-cli](https://github.com/edyandelacruz-art/playwright-cli) | QA de navegador, flujos E2E y revisión visual responsive | **Activo para validación** |
+
 ## Laboratorio
 
 | Repositorio | Uso | Estado |
@@ -34,11 +44,13 @@ Colección curada de repositorios externos que pueden integrarse con AION, BETCA
 2. `no-ai-slop`
 3. `i-have-adhd`
 4. `open-notebook`
-5. `OmniRoute`
-6. `strix`
-7. `open-seo`
-8. `ai-job-search`
-9. `Open-Generative-AI`
+5. `ui-ux-pro-max-skill` + `impeccable` + `npxskillui`
+6. `ux-discovery-interviewer-skill` + `playwright-cli`
+7. `OmniRoute`
+8. `strix`
+9. `open-seo`
+10. `ai-job-search`
+11. `Open-Generative-AI`
 
 ## Reglas de integración
 
