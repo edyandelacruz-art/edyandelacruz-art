@@ -1,0 +1,70 @@
+[
+  {
+    "name": "Coach crea un partido desde tema libre",
+    "viewport": "390x844",
+    "steps": [
+      "Abrir GoalMind V2",
+      "Escribir: Tengo examen de cinemática de 10°, me cuestan las gráficas y quiero algo difícil",
+      "Pulsar Preparar partido"
+    ],
+    "expected": "Se muestran acciones de Coach/Scout/Game Master/Referee, un plan con rival/OVR, al menos 3 preguntas válidas y fuentes reales devueltas por Scout."
+  },
+  {
+    "name": "PDF entra como fuente privada y termina en partido",
+    "viewport": "390x844",
+    "steps": [
+      "Abrir Material",
+      "Subir un PDF con contenido académico",
+      "Añadir al Coach",
+      "Preparar partido",
+      "Entrar al estadio"
+    ],
+    "expected": "El prompt contiene un token GMATERIAL, Scout muestra Materials como fuente usada, Referee deja referencias válidas y el partido usa preguntas derivadas del material."
+  },
+  {
+    "name": "PDF escaneado cae a imágenes",
+    "viewport": "390x844",
+    "steps": [
+      "Abrir Material",
+      "Subir PDF sin texto extraíble",
+      "Añadir al Coach"
+    ],
+    "expected": "Se renderizan hasta cuatro páginas a imágenes, el backend extrae texto académico y devuelve un token de material."
+  },
+  {
+    "name": "YouTube insuficiente falla de forma visible",
+    "viewport": "390x844",
+    "steps": [
+      "Abrir Material > YouTube",
+      "Usar un video sin suficiente contenido público recuperable",
+      "Añadir al Coach"
+    ],
+    "expected": "No se inventa una transcripción; la UI muestra un error y recomienda pegar la transcripción en Texto."
+  },
+  {
+    "name": "Referee bloquea referencias inventadas",
+    "viewport": "backend",
+    "steps": [
+      "Generar un plan donde la salida del modelo incluya sourceRefs no recuperados por Scout"
+    ],
+    "expected": "normalizeQuestions filtra referencias ajenas al conjunto permitido y solo conserva IDs reales recuperados."
+  },
+  {
+    "name": "Resultado alimenta la adaptación",
+    "viewport": "390x844",
+    "steps": [
+      "Completar un partido con precisión conocida",
+      "Crear un nuevo plan del mismo tema"
+    ],
+    "expected": "La precisión se persiste en escala 0–100; un Coach posterior puede consultar get_recent_learning y ajustar nivel/rival."
+  },
+  {
+    "name": "Escena de penalti mantiene regla académica",
+    "viewport": "390x844",
+    "steps": [
+      "Responder una pregunta correctamente",
+      "Responder otra incorrectamente"
+    ],
+    "expected": "Correcta siempre produce GOL; incorrecta produce ATAJADO. El movimiento del arquero nunca cambia la corrección académica."
+  }
+]
