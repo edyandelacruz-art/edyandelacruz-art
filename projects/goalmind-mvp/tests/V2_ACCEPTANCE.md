@@ -24,6 +24,7 @@ A V2 build is not considered ready unless all applicable checks pass.
 ## Mobile QA
 - Review 390x844 screenshot before calling the interface ready.
 - The Coach plan CTA is never obscured by the fixed bottom navigation.
+- The fixed bottom navigation has explicit V2 button/active styles; it must not depend on removed legacy `.nav-item` classes.
 - Text remains readable at 360px width.
 - Touch targets remain approximately 44px or larger for primary actions.
 - prefers-reduced-motion is respected.
@@ -31,4 +32,13 @@ A V2 build is not considered ready unless all applicable checks pass.
 ## Persistence
 - A Coach plan has a planId.
 - Completed matches post a result to the memory endpoint.
+- Accuracy has one canonical scale end-to-end (0–100 recommended); fractional 0–1 values must be converted before persistence.
 - Later Coach plans may use recent-learning history to adapt level/rival.
+
+## No-regression gate
+- PDF upload remains playable through V2.
+- YouTube/text ingestion remains playable through V2.
+- `POST /api/questions/generate` and the Coach endpoints coexist in the same deployable backend entrypoint.
+- The Material button opens a real ingestion flow; a toast/placeholder is not acceptable for release.
+
+No public V2 deploy until every item above passes.
