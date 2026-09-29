@@ -1,0 +1,12 @@
+{
+  "name": "goalmind-app-core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "rm -rf .test-dist && tsc -p tsconfig.test.json && node --test tests/*.test.mjs",
+    "verify": "npm run typecheck && npm test"
+  }
+}
