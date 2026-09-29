@@ -1,0 +1,1 @@
+Standalone Coach runtime is being mirrored into this directory so deployments rooted at projects/goalmind-mvp do not depend on sibling project paths.
