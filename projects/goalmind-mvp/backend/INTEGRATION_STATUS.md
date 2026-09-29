@@ -1,0 +1,1 @@
+Frontend V2 is integrated. The exact agent runtime blob is `a67f7136ff3cc671d99d05675330d8f08e3e2ae3`. This must replace the temporary re-export in backend/index.ts before deployment.
