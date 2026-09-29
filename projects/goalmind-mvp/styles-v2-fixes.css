@@ -1,0 +1,31 @@
+.bottom-nav button {
+  border: 0;
+  background: transparent;
+  border-radius: 14px;
+  min-height: 52px;
+  padding: 7px 4px;
+  display: grid;
+  gap: 3px;
+  place-items: center;
+  color: var(--gm-muted);
+  cursor: pointer;
+}
+
+.bottom-nav button span {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.bottom-nav button small {
+  font-size: 9px;
+}
+
+.bottom-nav button.active {
+  background: rgba(184, 255, 58, 0.09);
+  color: var(--gm-lime);
+}
+
+.bottom-nav button:focus-visible {
+  outline: 2px solid var(--gm-cyan);
+  outline-offset: 2px;
+}
