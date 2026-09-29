@@ -1,0 +1,1 @@
+Temporary marker: replace backend/index.ts with the standalone Coach runtime blob before deploy.
