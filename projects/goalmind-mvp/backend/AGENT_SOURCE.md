@@ -1,0 +1,1 @@
+The integrated backend source for this branch is `projects/goalmind-agentic-coach/backend/index.ts`. Before deployment, copy that exact runtime into `projects/goalmind-mvp/backend/index.ts` and merge the existing material-ingestion routes from the live MVP. Do not deploy V2 without both Coach and material routes.
