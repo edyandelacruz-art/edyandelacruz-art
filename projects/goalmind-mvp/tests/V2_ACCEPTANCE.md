@@ -1,6 +1,6 @@
 # GoalMind V2 — acceptance gate
 
-A V2 build is not considered ready unless all applicable checks pass.
+A V2 build is not considered ready unless every applicable check passes.
 
 ## Agent visibility
 - Coach is the primary action on the first player screen.
@@ -10,9 +10,19 @@ A V2 build is not considered ready unless all applicable checks pass.
 
 ## Repository traceability
 - GoalMind Library, Wikipedia and OpenAlex are visible as distinct sources.
-- After a plan is generated, the UI shows source counts actually returned by Scout.
-- Question generation may cite only source IDs returned by Scout.
-- Repository cards must not fabricate a successful retrieval.
+- Private user material is represented as `Materials`, not disguised as a public source.
+- After a plan is generated, source counts come from the sources actually returned by Scout.
+- Referee strips every question `sourceRef` that does not belong to Scout's retrieved source set.
+- Repository cards must never fabricate a successful retrieval.
+
+## Material ingestion
+- Material opens a real bottom-sheet flow; no toast/placeholder is acceptable.
+- PDF text is extracted client-side; scanned PDFs fall back to page images.
+- Images are converted to academic text server-side before entering the Coach context.
+- TXT/MD/CSV/JSON and pasted text are supported.
+- YouTube uses recoverable public content and fails visibly when insufficient content is exposed.
+- Stored material is scoped by guest session and is referenced by a material token in the Coach prompt.
+- `POST /api/material/store` and `POST /api/coach/plan` coexist in the same standalone backend entrypoint.
 
 ## Player scene
 - The goal is the dominant visual interaction surface.
@@ -22,23 +32,21 @@ A V2 build is not considered ready unless all applicable checks pass.
 - Correct answer = goal; incorrect answer/timeout = save. Keeper randomness never overrides academic correctness.
 
 ## Mobile QA
-- Review 390x844 screenshot before calling the interface ready.
-- The Coach plan CTA is never obscured by the fixed bottom navigation.
-- The fixed bottom navigation has explicit V2 button/active styles; it must not depend on removed legacy `.nav-item` classes.
+- Review 390x844 before calling the interface ready.
+- The Coach plan CTA is never obscured by fixed navigation.
+- Fixed bottom navigation has explicit V2 button/active styles.
 - Text remains readable at 360px width.
-- Touch targets remain approximately 44px or larger for primary actions.
+- Primary touch targets remain approximately 44px or larger.
 - prefers-reduced-motion is respected.
 
-## Persistence
-- A Coach plan has a planId.
+## Persistence and adaptation
+- A Coach plan has a planId and is stored under the guest session.
 - Completed matches post a result to the memory endpoint.
-- Accuracy has one canonical scale end-to-end (0–100 recommended); fractional 0–1 values must be converted before persistence.
-- Later Coach plans may use recent-learning history to adapt level/rival.
+- Accuracy is canonical 0–100 in persistence; fractional 0–1 values are normalized.
+- Later Coach runs can call `get_recent_learning` and adjust level/rival using prior performance.
+- Material and public-source metadata are stored with the generated study plan for traceability.
 
-## No-regression gate
-- PDF upload remains playable through V2.
-- YouTube/text ingestion remains playable through V2.
-- `POST /api/questions/generate` and the Coach endpoints coexist in the same deployable backend entrypoint.
-- The Material button opens a real ingestion flow; a toast/placeholder is not acceptable for release.
-
-No public V2 deploy until every item above passes.
+## Release gate
+- Healthcheck reports the agentic-materials backend version.
+- Material → Coach → sources → verified questions → match → result memory succeeds end-to-end.
+- No public V2 deploy is announced until the deployment host accepts the build and the live URL is checked on mobile.
