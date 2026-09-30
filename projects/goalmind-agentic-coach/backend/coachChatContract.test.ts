@@ -75,8 +75,10 @@ export function runCoachChatContractTests() {
   const publicView = publicConversationView(conversation);
   assert(publicView.conversationId === conversationId, 'public view must preserve conversation id');
   assert(publicView.messages.length === 24, 'public view must expose at most twelve turns');
+  assert(publicView.messages[0].content === 'turn-6', 'public view must retain the newest twelve-turn window');
+  assert(publicView.messages[23].content === 'turn-29', 'public view must retain the latest message');
   assert(!('guestId' in publicView), 'public view must not leak guest identity');
   assert(!('createdAt' in publicView), 'public view must not expose internal creation metadata');
 
-  return { passed: 16 };
+  return { passed: 18 };
 }
