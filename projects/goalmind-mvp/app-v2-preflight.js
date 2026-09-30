@@ -1,5 +1,6 @@
 import { api } from '@appdeploy/client';
 import './materials-v2.js';
+import './material-flow.js';
 
 const materialsCss = document.createElement('link');
 materialsCss.rel = 'stylesheet';
