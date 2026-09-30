@@ -59,12 +59,16 @@
     "expected": "La precisión se persiste en escala 0–100; un Coach posterior puede consultar get_recent_learning y ajustar nivel/rival."
   },
   {
-    "name": "Escena de penalti mantiene regla académica",
+    "name": "Escena de penalti mantiene regla académica y pausa para aprender",
     "viewport": "390x844",
     "steps": [
       "Responder una pregunta correctamente",
-      "Responder otra incorrectamente"
+      "Leer la explicación y la respuesta correcta en la tarjeta de corrección",
+      "Comprobar que la siguiente pregunta no aparece sola",
+      "Pulsar Siguiente jugada",
+      "Responder otra incorrectamente",
+      "Leer la corrección y pulsar Siguiente jugada"
     ],
-    "expected": "Correcta siempre produce GOL; incorrecta produce ATAJADO. El movimiento del arquero nunca cambia la corrección académica."
+    "expected": "Correcta siempre produce GOL; incorrecta produce ATAJADO. Después de cada tiro la tarjeta pedagógica permanece visible hasta que el estudiante pulsa Siguiente jugada o Enter; el movimiento del arquero nunca cambia la corrección académica."
   }
 ]
