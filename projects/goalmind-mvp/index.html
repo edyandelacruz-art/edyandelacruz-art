@@ -9,97 +9,25 @@
   <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="styles-v2.css" />
   <link rel="stylesheet" href="styles-v2-fixes.css" />
+  <link rel="stylesheet" href="premium-match.css" />
   <title>GoalMind — AI Learning Arena</title>
 </head>
 <body>
   <div class="app-shell">
     <header class="topbar">
-      <button class="brand" data-nav="home" aria-label="Inicio">
-        <span class="brand-mark">GM</span>
-        <span class="brand-copy"><b>GoalMind</b><small>AI learning arena</small></span>
-      </button>
-      <button class="profile-pill" data-nav="progress" aria-label="Perfil y progreso">
-        <span class="avatar">E</span>
-        <span><small>NIVEL 12</small><b>1,840 XP</b></span>
-      </button>
+      <button class="brand" data-nav="home" aria-label="Inicio"><span class="brand-mark">GM</span><span class="brand-copy"><b>GoalMind</b><small>AI learning arena</small></span></button>
+      <button class="profile-pill" data-nav="progress" aria-label="Perfil y progreso"><span class="avatar">E</span><span><small>NIVEL 12</small><b>1,840 XP</b></span></button>
     </header>
-
     <main id="app" aria-live="polite"></main>
-
-    <nav class="bottom-nav" aria-label="Navegación principal">
-      <button data-nav="home" class="active"><span>⌂</span><small>Inicio</small></button>
-      <button data-nav="play"><span>⚽</span><small>Jugar</small></button>
-      <button data-nav="compete"><span>🏆</span><small>Competir</small></button>
-      <button data-nav="progress"><span>◎</span><small>Progreso</small></button>
-    </nav>
+    <nav class="bottom-nav" aria-label="Navegación principal"><button data-nav="home" class="active"><span>⌂</span><small>Inicio</small></button><button data-nav="play"><span>⚽</span><small>Jugar</small></button><button data-nav="compete"><span>🏆</span><small>Competir</small></button><button data-nav="progress"><span>◎</span><small>Progreso</small></button></nav>
   </div>
-
   <template id="gameTemplate">
     <section class="game-screen">
-      <div class="match-topline">
-        <div class="club"><span class="club-badge">GM</span><div><small>JUGADOR</small><b>GoalMind XI</b></div></div>
-        <div class="match-score"><small>PARTIDO</small><strong id="hudScore">0</strong><span>—</span><strong id="opponentScore">0</strong></div>
-        <div class="club right"><div><small>RIVAL</small><b id="opponentName">Algebra City</b></div><span class="club-badge rival">AC</span></div>
-      </div>
-
-      <div class="question-card">
-        <div class="question-meta"><span id="gameTopic">Entrenamiento GoalMind</span><span><b id="hudQuestion">1/5</b> · <span id="timerText">8.0</span>s</span></div>
-        <h1 id="questionText"></h1>
-        <div class="timer-track" aria-label="Tiempo restante"><i id="timerFill"></i></div>
-      </div>
-
-      <div class="arena" id="arena">
-        <div class="crowd" aria-hidden="true"></div>
-        <div class="led-ribbon"><span>GOALMIND ARENA</span><span id="matchMode">RANKED · OVR 74</span></div>
-        <div class="goal-scene">
-          <div class="goal-depth" aria-hidden="true"></div>
-          <div class="goal-frame" aria-label="Portería con cuatro zonas de respuesta">
-            <div class="net" aria-hidden="true"></div>
-            <button class="answer-zone zone-a" data-answer="0"><b>A</b><span></span></button>
-            <button class="answer-zone zone-b" data-answer="1"><b>B</b><span></span></button>
-            <button class="answer-zone zone-c" data-answer="2"><b>C</b><span></span></button>
-            <button class="answer-zone zone-d" data-answer="3"><b>D</b><span></span></button>
-
-            <svg class="keeper" id="keeper" viewBox="0 0 160 210" aria-label="Arquero">
-              <defs>
-                <linearGradient id="jersey" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffc05c"/><stop offset=".45" stop-color="#ff812f"/><stop offset="1" stop-color="#d9471e"/></linearGradient>
-                <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e0a17a"/><stop offset="1" stop-color="#9f5d3f"/></linearGradient>
-                <linearGradient id="shorts" x1="0" x2="1"><stop stop-color="#162430"/><stop offset="1" stop-color="#08131c"/></linearGradient>
-                <filter id="keeperShadow"><feDropShadow dx="0" dy="7" stdDeviation="5" flood-opacity=".38"/></filter>
-              </defs>
-              <ellipse cx="80" cy="198" rx="50" ry="8" fill="#000" opacity=".22"/>
-              <g filter="url(#keeperShadow)">
-                <ellipse cx="80" cy="37" rx="19" ry="21" fill="url(#skin)"/>
-                <path d="M61 35c1-15 9-23 21-23 12 0 21 8 22 22-8-6-16-9-24-8-8 0-14 4-19 9z" fill="#12202a"/>
-                <circle cx="72" cy="37" r="1.8" fill="#1f2020"/><circle cx="89" cy="37" r="1.8" fill="#1f2020"/>
-                <path d="M75 49q5 4 11 0" stroke="#7e4736" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-                <ellipse cx="60" cy="39" rx="4" ry="7" fill="#b96f4c"/><ellipse cx="100" cy="39" rx="4" ry="7" fill="#b96f4c"/>
-                <path d="M73 56h14l3 14H70z" fill="#a76245"/>
-                <path d="M50 71 Q80 56 110 71 L121 132 Q80 149 39 132 Z" fill="url(#jersey)" stroke="#87321a" stroke-width="2"/>
-                <path d="M49 74 C39 75 31 81 22 89 L9 101 C3 107 6 117 14 120 C20 122 25 118 30 113 L57 91 Z" fill="url(#jersey)" stroke="#87321a" stroke-width="2"/>
-                <path d="M111 74 C121 75 129 81 138 89 L151 101 C157 107 154 117 146 120 C140 122 135 118 130 113 L103 91 Z" fill="url(#jersey)" stroke="#87321a" stroke-width="2"/>
-                <path d="M6 104 C-2 108-1 119 7 124 C13 128 19 126 27 116 L18 104 Z" fill="#f1f7fb" stroke="#9cc6dc" stroke-width="2"/>
-                <path d="M154 104 C162 108 161 119 153 124 C147 128 141 126 133 116 L142 104 Z" fill="#f1f7fb" stroke="#9cc6dc" stroke-width="2"/>
-                <path d="M45 84q35 14 70 0" stroke="rgba(255,255,255,.32)" stroke-width="3" fill="none"/>
-                <text x="80" y="111" text-anchor="middle" font-size="31" font-weight="900" fill="#fff">1</text>
-                <path d="M43 130 Q80 142 117 130 L112 158 Q80 168 48 158Z" fill="url(#shorts)" stroke="#071019" stroke-width="2"/>
-                <path d="M54 156 C48 164 43 176 39 187 L58 192 C65 177 70 167 72 158Z" fill="#d87a4f" stroke="#834229" stroke-width="2"/>
-                <path d="M106 156 C112 164 117 176 121 187 L102 192 C95 177 90 167 88 158Z" fill="#d87a4f" stroke="#834229" stroke-width="2"/>
-                <path d="M37 184h23l-1 9H33z" fill="#f2f6f8"/><path d="M123 184h-23l1 9h26z" fill="#f2f6f8"/>
-                <path d="M30 191h31q3 5-3 9H25q-4-6 5-9z" fill="#dce9ef" stroke="#718b9a" stroke-width="1.5"/>
-                <path d="M130 191H99q-3 5 3 9h33q4-6-5-9z" fill="#dce9ef" stroke="#718b9a" stroke-width="1.5"/>
-              </g>
-            </svg>
-          </div>
-          <div class="ball" id="ball" aria-hidden="true"></div>
-          <div class="shot-feedback" id="shotFeedback"></div>
-        </div>
-        <div class="stadium-footer"><span>TOCA UNA ZONA DEL ARCO</span><span>🔥 RACHA <b id="hudStreak">×1</b></span></div>
-      </div>
+      <div class="match-topline"><div class="club"><span class="club-badge">GM</span><div><small>JUGADOR</small><b>GoalMind XI</b></div></div><div class="match-score"><small>PARTIDO</small><strong id="hudScore">0</strong><span>—</span><strong id="opponentScore">0</strong></div><div class="club right"><div><small>RIVAL</small><b id="opponentName">Algebra City</b></div><span class="club-badge rival">AC</span></div></div>
+      <div class="question-card"><div class="question-meta"><span id="gameTopic">Entrenamiento GoalMind</span><span><b id="hudQuestion">1/5</b> · <span id="timerText">8.0</span>s</span></div><h1 id="questionText"></h1><div class="timer-track" aria-label="Tiempo restante"><i id="timerFill"></i></div></div>
+      <div class="arena" id="arena"><div class="crowd" aria-hidden="true"></div><div class="led-ribbon"><span>GOALMIND ARENA</span><span id="matchMode">RANKED · OVR 74</span></div><div class="goal-scene"><div class="goal-depth" aria-hidden="true"></div><div class="goal-frame" aria-label="Portería con cuatro zonas de respuesta"><div class="net" aria-hidden="true"></div><button class="answer-zone zone-a" data-answer="0"><b>A</b><span></span></button><button class="answer-zone zone-b" data-answer="1"><b>B</b><span></span></button><button class="answer-zone zone-c" data-answer="2"><b>C</b><span></span></button><button class="answer-zone zone-d" data-answer="3"><b>D</b><span></span></button>
+      <svg class="keeper" id="keeper" viewBox="0 0 160 210" aria-label="Arquero"><defs><linearGradient id="jersey" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffc05c"/><stop offset=".45" stop-color="#ff812f"/><stop offset="1" stop-color="#d9471e"/></linearGradient><linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#e0a17a"/><stop offset="1" stop-color="#9f5d3f"/></linearGradient><linearGradient id="shorts" x1="0" x2="1"><stop stop-color="#162430"/><stop offset="1" stop-color="#08131c"/></linearGradient><filter id="keeperShadow"><feDropShadow dx="0" dy="7" stdDeviation="5" flood-opacity=".38"/></filter></defs><ellipse cx="80" cy="198" rx="50" ry="8" fill="#000" opacity=".22"/><g filter="url(#keeperShadow)"><ellipse cx="80" cy="37" rx="19" ry="21" fill="url(#skin)"/><path d="M61 35c1-15 9-23 21-23 12 0 21 8 22 22-8-6-16-9-24-8-8 0-14 4-19 9z" fill="#12202a"/><circle cx="72" cy="37" r="1.8" fill="#1f2020"/><circle cx="89" cy="37" r="1.8" fill="#1f2020"/><path d="M75 49q5 4 11 0" stroke="#7e4736" stroke-width="1.8" fill="none" stroke-linecap="round"/><ellipse cx="60" cy="39" rx="4" ry="7" fill="#b96f4c"/><ellipse cx="100" cy="39" rx="4" ry="7" fill="#b96f4c"/><path d="M73 56h14l3 14H70z" fill="#a76245"/><path d="M50 71 Q80 56 110 71 L121 132 Q80 149 39 132 Z" fill="url(#jersey)" stroke="#87321a" stroke-width="2"/><path d="M49 74 C39 75 31 81 22 89 L9 101 C3 107 6 117 14 120 C20 122 25 118 30 113 L57 91 Z" fill="url(#jersey)" stroke="#87321a" stroke-width="2"/><path d="M111 74 C121 75 129 81 138 89 L151 101 C157 107 154 117 146 120 C140 122 135 118 130 113 L103 91 Z" fill="url(#jersey)" stroke="#87321a" stroke-width="2"/><path d="M6 104 C-2 108-1 119 7 124 C13 128 19 126 27 116 L18 104 Z" fill="#f1f7fb" stroke="#9cc6dc" stroke-width="2"/><path d="M154 104 C162 108 161 119 153 124 C147 128 141 126 133 116 L142 104 Z" fill="#f1f7fb" stroke="#9cc6dc" stroke-width="2"/><path d="M45 84q35 14 70 0" stroke="rgba(255,255,255,.32)" stroke-width="3" fill="none"/><text x="80" y="111" text-anchor="middle" font-size="31" font-weight="900" fill="#fff">1</text><path d="M43 130 Q80 142 117 130 L112 158 Q80 168 48 158Z" fill="url(#shorts)" stroke="#071019" stroke-width="2"/><path d="M54 156 C48 164 43 176 39 187 L58 192 C65 177 70 167 72 158Z" fill="#d87a4f" stroke="#834229" stroke-width="2"/><path d="M106 156 C112 164 117 176 121 187 L102 192 C95 177 90 167 88 158Z" fill="#d87a4f" stroke="#834229" stroke-width="2"/><path d="M37 184h23l-1 9H33z" fill="#f2f6f8"/><path d="M123 184h-23l1 9h26z" fill="#f2f6f8"/><path d="M30 191h31q3 5-3 9H25q-4-6 5-9z" fill="#dce9ef" stroke="#718b9a" stroke-width="1.5"/><path d="M130 191H99q-3 5 3 9h33q4-6-5-9z" fill="#dce9ef" stroke="#718b9a" stroke-width="1.5"/></g></svg></div><div class="ball" id="ball" aria-hidden="true"></div><div class="shot-feedback" id="shotFeedback"></div></div><div class="stadium-footer"><span>TOCA UNA ZONA DEL ARCO</span><span>🔥 RACHA <b id="hudStreak">×1</b></span></div></div>
     </section>
   </template>
-
-  <script type="module" src="app-v2-preflight.js"></script>
-  <script type="module" src="app-v2.js"></script>
-</body>
-</html>
+  <script type="module" src="app-v2-preflight.js"></script><script type="module" src="app-v2.js"></script>
+</body></html>
