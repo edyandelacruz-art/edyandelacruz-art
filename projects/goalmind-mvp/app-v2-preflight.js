@@ -1,4 +1,3 @@
-import { api } from '@appdeploy/client';
 import './materials-v2.js';
 import './material-flow.js';
 import './match-effects.js';
@@ -13,10 +12,6 @@ matchEffectsCss.rel = 'stylesheet';
 matchEffectsCss.href = './match-effects.css';
 document.head.appendChild(matchEffectsCss);
 
-const originalPost = api.post.bind(api);
-api.post = (url, data) => {
-  if (url === '/api/coach/result' && data && typeof data.accuracy === 'number' && data.accuracy >= 0 && data.accuracy <= 1) {
-    return originalPost(url, { ...data, accuracy: data.accuracy * 100 });
-  }
-  return originalPost(url, data);
-};
+// Result accuracy is normalized at the backend boundary. Keep this preflight
+// focused on loading progressive-enhancement modules; do not monkey-patch the
+// shared API client because that creates hidden transport behaviour.
