@@ -8,7 +8,6 @@ export type LlmChatMessage = {
 export type ExternalLlmStatus = {
   configured: boolean;
   provider: 'openai-compatible';
-  model: string | null;
   paidFallbackAllowed: boolean;
 };
 
@@ -79,7 +78,6 @@ export async function getExternalLlmStatus(): Promise<ExternalLlmStatus> {
   return {
     configured: Boolean(config),
     provider: 'openai-compatible',
-    model: config?.model || null,
     paidFallbackAllowed: config?.paidFallbackAllowed || false,
   };
 }
@@ -89,7 +87,7 @@ export async function generateExternalChatReply(input: {
   messages: LlmChatMessage[];
   maxTokens?: number;
   temperature?: number;
-}): Promise<{ text: string; model: string; paidFallbackAllowed: boolean } | null> {
+}): Promise<{ text: string; paidFallbackAllowed: boolean } | null> {
   const config = await readExternalConfig();
   if (!config) return null;
 
@@ -124,7 +122,7 @@ export async function generateExternalChatReply(input: {
     const text = String(payload.choices?.[0]?.message?.content || '').trim().slice(0, 8_000);
     if (!text) throw new Error('External LLM returned an empty completion.');
 
-    return { text, model: config.model, paidFallbackAllowed: config.paidFallbackAllowed };
+    return { text, paidFallbackAllowed: config.paidFallbackAllowed };
   } finally {
     clearTimeout(timeout);
   }
