@@ -31,6 +31,7 @@ const state = {
   timer: null,
   questionStart: 0,
   locked: false,
+  awaitingNext: false,
   planId: null,
   plan: null,
   sources: [],
@@ -243,6 +244,7 @@ function startGame() {
     streak: 0,
     elapsed: [],
     locked: false,
+    awaitingNext: false,
   });
   go('game');
 }
@@ -258,6 +260,7 @@ function renderGame() {
 
 function loadQuestion() {
   state.locked = false;
+  state.awaitingNext = false;
   const arena = document.querySelector('#arena');
   arena.classList.remove('locked');
   document.querySelector('.feedback-card')?.remove();
@@ -314,7 +317,7 @@ function answer(index) {
     state.streak = 0;
   }
   animateShot(index < 0 ? Number(question.correct) : index, correct, index < 0);
-  setTimeout(() => showFeedback(correct, question, index < 0), 520);
+  setTimeout(() => showFeedback(correct, question, index, index < 0), 520);
 }
 
 function animateShot(index, correct, timeout) {
@@ -327,28 +330,55 @@ function animateShot(index, correct, timeout) {
     { left: '73%', bottom: '39%' },
   ];
   const target = targets[index] || targets[0];
-  ball.classList.add('shooting');
-  ball.style.left = target.left;
-  ball.style.bottom = target.bottom;
   const keeperIndex = correct ? (index + 1) % 4 : index;
   const keeperTarget = targets[keeperIndex] || targets[0];
-  keeper.style.left = keeperTarget.left;
-  keeper.style.bottom = keeperIndex < 2 ? '19%' : '4%';
-  keeper.style.transform = `rotate(${keeperIndex % 2 === 0 ? -47 : 47}deg) scale(.94)`;
+  requestAnimationFrame(() => {
+    ball?.classList.add('shooting');
+    if (ball) {
+      ball.style.left = target.left;
+      ball.style.bottom = target.bottom;
+    }
+    if (keeper) {
+      keeper.classList.add('is-moving');
+      keeper.style.left = keeperTarget.left;
+      keeper.style.bottom = keeperIndex < 2 ? '19%' : '4%';
+      keeper.style.transform = `translateZ(0) rotate(${keeperIndex % 2 === 0 ? -47 : 47}deg) scale(.94)`;
+    }
+  });
   const feedback = document.querySelector('#shotFeedback');
-  feedback.textContent = timeout ? 'TIEMPO' : correct ? 'GOOOL' : 'ATAJADO';
-  feedback.className = `shot-feedback ${correct ? 'goal' : 'save'} show`;
+  if (feedback) {
+    feedback.textContent = timeout ? 'TIEMPO' : correct ? 'GOOOL' : 'ATAJADO';
+    feedback.className = `shot-feedback ${correct ? 'goal' : 'save'} show`;
+  }
 }
 
-function showFeedback(correct, question, timeout) {
+function showFeedback(correct, question, selectedIndex, timeout) {
+  state.awaitingNext = true;
+  const correctIndex = Number(question.correct);
+  const correctLetter = ['A', 'B', 'C', 'D'][correctIndex] || '';
+  const correctText = question.a?.[correctIndex] || '';
+  const selectedText = selectedIndex >= 0 ? question.a?.[selectedIndex] || '' : 'Sin respuesta';
   const card = document.createElement('div');
-  card.className = 'feedback-card';
-  card.innerHTML = `<b>${correct ? '+ GOL' : 'Revisa la jugada'}</b><p>${timeout ? 'Se agotó el tiempo. ' : ''}${escapeHtml(question.note)}</p>`;
-  document.querySelector('#arena').appendChild(card);
-  setTimeout(nextQuestion, 1250);
+  card.className = `feedback-card ${correct ? 'is-correct' : 'is-review'}`;
+  card.setAttribute('role', 'dialog');
+  card.setAttribute('aria-label', correct ? 'Corrección del gol' : 'Corrección de la jugada');
+  card.innerHTML = `
+    <div class="feedback-kicker">${correct ? '¡GOL! APRENDE LA JUGADA' : timeout ? 'TIEMPO · REVISA' : 'ATAJADA · REVISA'}</div>
+    <b>${correct ? 'Respuesta correcta' : 'Qué debes corregir'}</b>
+    ${correct ? '' : `<small>Elegiste: ${escapeHtml(selectedText)}</small>`}
+    <p>${escapeHtml(question.note)}</p>
+    <div class="feedback-answer"><span>Respuesta correcta</span><strong>${correctLetter} · ${escapeHtml(correctText)}</strong></div>
+    <button class="feedback-next" id="nextPlay">${state.qIndex + 1 >= state.questions.length ? 'Ver resultado →' : 'Siguiente jugada →'}</button>`;
+  document.querySelector('.feedback-card')?.remove();
+  document.querySelector('#arena')?.appendChild(card);
+  const next = card.querySelector('#nextPlay');
+  next.onclick = nextQuestion;
+  setTimeout(() => next.focus(), 80);
 }
 
 function nextQuestion() {
+  if (!state.awaitingNext) return;
+  state.awaitingNext = false;
   state.qIndex += 1;
   if (state.qIndex >= state.questions.length) {
     finishMatch();
@@ -367,9 +397,10 @@ function resetActors() {
     ball.style.bottom = '15px';
   }
   if (keeper) {
+    keeper.classList.remove('is-moving');
     keeper.style.left = '50%';
     keeper.style.bottom = '-15px';
-    keeper.style.transform = '';
+    keeper.style.transform = 'translateZ(0)';
   }
   if (feedback) {
     feedback.className = 'shot-feedback';
@@ -449,7 +480,13 @@ function showToast(message) {
 }
 
 document.addEventListener('keydown', event => {
-  if (state.view !== 'game' || state.locked) return;
+  if (state.view !== 'game') return;
+  if (state.awaitingNext && (event.key === 'Enter' || event.key === ' ')) {
+    event.preventDefault();
+    nextQuestion();
+    return;
+  }
+  if (state.locked) return;
   const index = { a: 0, b: 1, c: 2, d: 3 }[event.key.toLowerCase()];
   if (index !== undefined) answer(index);
 });
