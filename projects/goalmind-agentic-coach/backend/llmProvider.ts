@@ -103,8 +103,11 @@ async function readExternalConfig(): Promise<ExternalLlmConfig | null> {
   return { baseUrl: ensureOpenAiBaseUrl(rawBaseUrl), model, apiKey, paidFallbackAllowed };
 }
 export async function getExternalLlmStatus(): Promise<ExternalLlmStatus> {
+  const names = await secrets.listSecretNames();
+  const paidFallbackAllowed = parseBoolean(await readOptionalSecret(PAID_FALLBACK_SECRET, names));
+  if (!names.includes(BASE_URL_SECRET)) return { configured: false, provider: 'openai-compatible', paidFallbackAllowed };
   const config = await readExternalConfig();
-  return { configured: Boolean(config), provider: 'openai-compatible', paidFallbackAllowed: config?.paidFallbackAllowed || false };
+  return { configured: Boolean(config), provider: 'openai-compatible', paidFallbackAllowed };
 }
 export async function generateExternalChatReply(input: { system: string; messages: LlmChatMessage[]; maxTokens?: number; temperature?: number }): Promise<{ text: string; paidFallbackAllowed: boolean } | null> {
   const config = await readExternalConfig();
