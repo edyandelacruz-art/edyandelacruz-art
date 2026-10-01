@@ -56,7 +56,22 @@ Esto mantiene lecturas acotadas y evita escanear tablas crecientes.
 
 ## Estado de publicación
 
-El 29 de septiembre de 2026 se intentó desplegar esta capa sobre el AppDeploy público de GoalMind. El código pasó a la fase de deploy, pero AppDeploy bloqueó nuevas publicaciones por agotamiento del presupuesto diario Free tier hasta `2026-09-30T00:00:00Z`. La versión pública previa sigue activa y estable. Esta rama conserva la nueva capa para reintentar el despliegue sin reconstruirla.
+La URL pública verificada del flujo V2 es `https://goalmind-mvp-tev8mi.v2.appdeploy.ai/` (QA público registrado el 30 de septiembre de 2026). La rama `feature/goalmind-agentic-coach` continúa como rama de integración y el PR #6 permanece draft; `main` no se fusiona sin aprobación explícita.
+
+### Política de inferencia y coste
+
+Los endpoints `POST /api/coach/chat` y `POST /api/coach/plan` pasan por `runEndpointInference`. La política distingue tres estados: proveedor externo OpenAI-compatible, fallback AppDeploy pagado autorizado explícitamente, o inferencia no disponible. La ausencia de `GOALMIND_LLM_BASE_URL` no autoriza gasto: AppDeploy AI solo puede ejecutarse si `GOALMIND_LLM_ALLOW_APPDEPLOY_FALLBACK=true`; de lo contrario la frontera devuelve indisponibilidad controlada (503).
+
+El proveedor externo aplica HTTPS/controles SSRF, JSON estricto, presupuestos de entrada y límite de respuesta. No se documentan ni almacenan secretos en el repositorio.
+
+### Gate pendiente antes de declarar esta rama lista para publicar
+
+- ejecutar typecheck/tests/build en un runtime con toolchain disponible;
+- validar E2E `sin endpoint + sin opt-in => 503` y confirmar cero llamadas pagadas;
+- validar E2E con endpoint Qwen/Ollama HTTPS autenticado real;
+- repetir QA móvil y escritorio sobre la preview resultante.
+
+No hay GitHub Actions/checks asociados al HEAD actual, por lo que el código versionado no equivale todavía a validación de runtime.
 
 ## Referencias internas reutilizadas
 
