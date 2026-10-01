@@ -18,13 +18,7 @@ test('rejects credentials embedded in endpoint URLs', () => {
 });
 
 test('rejects private and link-local external targets', () => {
-  for (const url of [
-    'https://10.0.0.2:11434',
-    'https://172.16.0.2:11434',
-    'https://192.168.1.10:11434',
-    'https://169.254.169.254',
-    'https://model.local',
-  ]) {
+  for (const url of ['https://10.0.0.2:11434','https://172.16.0.2:11434','https://192.168.1.10:11434','https://169.254.169.254','https://model.local']) {
     assert.throws(() => __test.ensureOpenAiBaseUrl(url), /private|link-local/);
   }
 });
@@ -54,4 +48,18 @@ test('paid AppDeploy fallback remains opt-in', () => {
   assert.equal(__test.parseBoolean('true'), true);
   assert.equal(__test.parseBoolean('YES'), true);
   assert.equal(__test.parseBoolean('on'), true);
+});
+
+test('accepts JSON content types and rejects HTML or missing content type', () => {
+  assert.doesNotThrow(() => __test.assertJsonContentType('application/json'));
+  assert.doesNotThrow(() => __test.assertJsonContentType('application/json; charset=utf-8'));
+  assert.doesNotThrow(() => __test.assertJsonContentType('application/problem+json'));
+  assert.throws(() => __test.assertJsonContentType('text/html'), /non-JSON/);
+  assert.throws(() => __test.assertJsonContentType(null), /non-JSON/);
+});
+
+test('rejects declared external LLM responses above the safety limit', () => {
+  assert.doesNotThrow(() => __test.assertSafeContentLength(String(__test.MAX_RESPONSE_BYTES)));
+  assert.throws(() => __test.assertSafeContentLength(String(__test.MAX_RESPONSE_BYTES + 1)), /too large/);
+  assert.doesNotThrow(() => __test.assertSafeContentLength(null));
 });
