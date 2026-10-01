@@ -11,6 +11,7 @@
     "types": ["node", "vitest/globals"]
   },
   "include": [
+    "backend/appdeploy-sdk.d.ts",
     "backend/coachChatContract.ts",
     "backend/coachChatContract.test.ts",
     "backend/inferenceEndpointAdapter.ts",
