@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { test } from 'vitest';
 import { __test } from './llmProvider';
 
 test('normalizes an HTTPS OpenAI-compatible endpoint to /v1', () => {
@@ -28,9 +28,7 @@ test('enforces bounded prompts and conversation windows before network I/O', () 
 });
 test('bounds serialized request bytes and clamps generation controls', () => {
   const body = JSON.parse(__test.buildRequestBody({ system: 'coach', messages: [{ role: 'user', content: 'hola' }], maxTokens: 99999, temperature: 99 }, 'qwen3:4b'));
-  assert.equal(body.max_tokens, 2048);
-  assert.equal(body.temperature, 1.5);
-  assert.equal(body.stream, false);
+  assert.equal(body.max_tokens, 2048); assert.equal(body.temperature, 1.5); assert.equal(body.stream, false);
   const nearLimit = 'ñ'.repeat(Math.floor(__test.MAX_MESSAGE_CHARS / 2));
   assert.doesNotThrow(() => __test.buildRequestBody({ system: 's', messages: [{ role: 'user', content: nearLimit }] }, 'qwen3:4b'));
 });
