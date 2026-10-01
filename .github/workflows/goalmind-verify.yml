@@ -1,0 +1,46 @@
+name: GoalMind Verify
+
+on:
+  pull_request:
+    paths:
+      - 'projects/goalmind-agentic-coach/**'
+      - '.github/workflows/goalmind-verify.yml'
+  push:
+    branches:
+      - feature/goalmind-agentic-coach
+    paths:
+      - 'projects/goalmind-agentic-coach/**'
+      - '.github/workflows/goalmind-verify.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: goalmind-verify-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: projects/goalmind-agentic-coach
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: projects/goalmind-agentic-coach/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck and unit tests
+        run: npm run verify
+
+      - name: Cost-boundary tests
+        run: npm run test:cost-boundary
