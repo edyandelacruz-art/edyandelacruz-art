@@ -19,11 +19,7 @@ type ExternalLlmConfig = {
 };
 
 type ChatCompletionResponse = {
-  choices?: Array<{
-    message?: {
-      content?: string | null;
-    };
-  }>;
+  choices?: Array<{ message?: { content?: string | null } }>;
 };
 
 const BASE_URL_SECRET = 'GOALMIND_LLM_BASE_URL';
@@ -31,6 +27,7 @@ const MODEL_SECRET = 'GOALMIND_LLM_MODEL';
 const API_KEY_SECRET = 'GOALMIND_LLM_API_KEY';
 const PAID_FALLBACK_SECRET = 'GOALMIND_LLM_ALLOW_APPDEPLOY_FALLBACK';
 const DEFAULT_LOCAL_MODEL = 'qwen3:4b';
+const MAX_RESPONSE_BYTES = 1_000_000;
 
 function isPrivateIpv4(hostname: string): boolean {
   const parts = hostname.split('.').map(Number);
@@ -47,25 +44,30 @@ function isPrivateHostname(hostname: string): boolean {
 function ensureOpenAiBaseUrl(value: string): string {
   const trimmed = value.trim().replace(/\/+$/, '');
   if (!trimmed) throw new Error('GOALMIND_LLM_BASE_URL is empty.');
-
   const parsed = new URL(trimmed);
   const host = parsed.hostname.toLowerCase();
   const isLoopback = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]';
-
-  if (parsed.protocol !== 'https:' && !(parsed.protocol === 'http:' && isLoopback)) {
-    throw new Error('External LLM endpoint must use HTTPS unless it is localhost.');
-  }
+  if (parsed.protocol !== 'https:' && !(parsed.protocol === 'http:' && isLoopback)) throw new Error('External LLM endpoint must use HTTPS unless it is localhost.');
   if (parsed.username || parsed.password) throw new Error('Do not embed credentials in GOALMIND_LLM_BASE_URL.');
   if (parsed.hash || parsed.search) throw new Error('GOALMIND_LLM_BASE_URL must not contain query parameters or fragments.');
-  if (isPrivateHostname(host) && !isLoopback) {
-    throw new Error('External LLM endpoint must not target private or link-local networks. Use an authenticated HTTPS gateway.');
-  }
-
+  if (isPrivateHostname(host) && !isLoopback) throw new Error('External LLM endpoint must not target private or link-local networks. Use an authenticated HTTPS gateway.');
   return trimmed.endsWith('/v1') ? trimmed : `${trimmed}/v1`;
 }
 
 function parseBoolean(value: string | undefined): boolean {
   return /^(1|true|yes|on)$/i.test(String(value || '').trim());
+}
+
+function assertJsonContentType(value: string | null): void {
+  if (!value || !/^application\/(?:[a-z0-9.+-]*\+)?json(?:\s*;|$)/i.test(value)) {
+    throw new Error('External LLM returned a non-JSON response.');
+  }
+}
+
+function assertSafeContentLength(value: string | null): void {
+  if (!value) return;
+  const bytes = Number(value);
+  if (Number.isFinite(bytes) && bytes > MAX_RESPONSE_BYTES) throw new Error('External LLM response is too large.');
 }
 
 async function readOptionalSecret(name: string, names: string[]): Promise<string | undefined> {
@@ -77,27 +79,16 @@ async function readOptionalSecret(name: string, names: string[]): Promise<string
 async function readExternalConfig(): Promise<ExternalLlmConfig | null> {
   const names = await secrets.listSecretNames();
   if (!names.includes(BASE_URL_SECRET)) return null;
-
   const rawBaseUrl = await secrets.readSecret(BASE_URL_SECRET);
   const model = (await readOptionalSecret(MODEL_SECRET, names)) || DEFAULT_LOCAL_MODEL;
   const apiKey = await readOptionalSecret(API_KEY_SECRET, names);
   const paidFallbackAllowed = parseBoolean(await readOptionalSecret(PAID_FALLBACK_SECRET, names));
-
-  return {
-    baseUrl: ensureOpenAiBaseUrl(rawBaseUrl),
-    model,
-    apiKey,
-    paidFallbackAllowed,
-  };
+  return { baseUrl: ensureOpenAiBaseUrl(rawBaseUrl), model, apiKey, paidFallbackAllowed };
 }
 
 export async function getExternalLlmStatus(): Promise<ExternalLlmStatus> {
   const config = await readExternalConfig();
-  return {
-    configured: Boolean(config),
-    provider: 'openai-compatible',
-    paidFallbackAllowed: config?.paidFallbackAllowed || false,
-  };
+  return { configured: Boolean(config), provider: 'openai-compatible', paidFallbackAllowed: config?.paidFallbackAllowed || false };
 }
 
 export async function generateExternalChatReply(input: {
@@ -108,47 +99,31 @@ export async function generateExternalChatReply(input: {
 }): Promise<{ text: string; paidFallbackAllowed: boolean } | null> {
   const config = await readExternalConfig();
   if (!config) return null;
-
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60_000);
-
   try {
     const response = await fetch(`${config.baseUrl}/chat/completions`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}),
-      },
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}) },
       body: JSON.stringify({
         model: config.model,
-        messages: [
-          { role: 'system', content: input.system },
-          ...input.messages.map(message => ({ role: message.role, content: message.content })),
-        ],
+        messages: [{ role: 'system', content: input.system }, ...input.messages.map(message => ({ role: message.role, content: message.content }))],
         stream: false,
         temperature: Math.max(0, Math.min(1.5, Number(input.temperature) || 0.35)),
         max_tokens: Math.max(64, Math.min(2048, Math.floor(Number(input.maxTokens) || 700))),
       }),
       signal: controller.signal,
     });
-
-    if (!response.ok) {
-      throw new Error(`External LLM returned HTTP ${response.status}.`);
-    }
-
+    if (!response.ok) throw new Error(`External LLM returned HTTP ${response.status}.`);
+    assertJsonContentType(response.headers.get('content-type'));
+    assertSafeContentLength(response.headers.get('content-length'));
     const payload = await response.json() as ChatCompletionResponse;
     const text = String(payload.choices?.[0]?.message?.content || '').trim().slice(0, 8_000);
     if (!text) throw new Error('External LLM returned an empty completion.');
-
     return { text, paidFallbackAllowed: config.paidFallbackAllowed };
   } finally {
     clearTimeout(timeout);
   }
 }
 
-export const __test = {
-  ensureOpenAiBaseUrl,
-  isPrivateIpv4,
-  isPrivateHostname,
-  parseBoolean,
-};
+export const __test = { ensureOpenAiBaseUrl, isPrivateIpv4, isPrivateHostname, parseBoolean, assertJsonContentType, assertSafeContentLength, MAX_RESPONSE_BYTES };
