@@ -14,10 +14,32 @@ test('allows plain HTTP only for loopback development', () => {
 });
 
 test('rejects credentials embedded in endpoint URLs', () => {
-  assert.throws(
-    () => __test.ensureOpenAiBaseUrl('https://user:password@llm.example.com'),
-    /credentials/,
-  );
+  assert.throws(() => __test.ensureOpenAiBaseUrl('https://user:password@llm.example.com'), /credentials/);
+});
+
+test('rejects private and link-local external targets', () => {
+  for (const url of [
+    'https://10.0.0.2:11434',
+    'https://172.16.0.2:11434',
+    'https://192.168.1.10:11434',
+    'https://169.254.169.254',
+    'https://model.local',
+  ]) {
+    assert.throws(() => __test.ensureOpenAiBaseUrl(url), /private|link-local/);
+  }
+});
+
+test('rejects query parameters and fragments in endpoint URLs', () => {
+  assert.throws(() => __test.ensureOpenAiBaseUrl('https://llm.example.com?target=x'), /query parameters/);
+  assert.throws(() => __test.ensureOpenAiBaseUrl('https://llm.example.com/#x'), /fragments/);
+});
+
+test('classifies private IPv4 ranges', () => {
+  assert.equal(__test.isPrivateIpv4('10.1.2.3'), true);
+  assert.equal(__test.isPrivateIpv4('172.31.255.1'), true);
+  assert.equal(__test.isPrivateIpv4('192.168.0.1'), true);
+  assert.equal(__test.isPrivateIpv4('169.254.1.1'), true);
+  assert.equal(__test.isPrivateIpv4('8.8.8.8'), false);
 });
 
 test('rejects empty and malformed endpoint URLs', () => {
