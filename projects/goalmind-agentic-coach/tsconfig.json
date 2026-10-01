@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node", "vitest/globals"]
+  },
+  "include": [
+    "backend/coachChatContract.ts",
+    "backend/coachChatContract.test.ts",
+    "backend/inferenceEndpointAdapter.ts",
+    "backend/inferenceEndpointAdapter.test.ts",
+    "backend/inferencePolicy.ts",
+    "backend/inferencePolicy.test.ts",
+    "backend/inferenceRouter.ts",
+    "backend/inferenceRouter.test.ts",
+    "backend/llmProvider.ts",
+    "backend/llmProvider.test.ts"
+  ]
+}
