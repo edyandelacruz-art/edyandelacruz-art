@@ -1,26 +1,9 @@
 import { secrets } from '@appdeploy/sdk';
 
-export type LlmChatMessage = {
-  role: 'user' | 'assistant';
-  content: string;
-};
-
-export type ExternalLlmStatus = {
-  configured: boolean;
-  provider: 'openai-compatible';
-  paidFallbackAllowed: boolean;
-};
-
-type ExternalLlmConfig = {
-  baseUrl: string;
-  model: string;
-  apiKey?: string;
-  paidFallbackAllowed: boolean;
-};
-
-type ChatCompletionResponse = {
-  choices?: Array<{ message?: { content?: string | null } }>;
-};
+export type LlmChatMessage = { role: 'user' | 'assistant'; content: string };
+export type ExternalLlmStatus = { configured: boolean; provider: 'openai-compatible'; paidFallbackAllowed: boolean };
+type ExternalLlmConfig = { baseUrl: string; model: string; apiKey?: string; paidFallbackAllowed: boolean };
+type ChatCompletionResponse = { choices?: Array<{ message?: { content?: string | null } }> };
 
 const BASE_URL_SECRET = 'GOALMIND_LLM_BASE_URL';
 const MODEL_SECRET = 'GOALMIND_LLM_MODEL';
@@ -35,12 +18,10 @@ function isPrivateIpv4(hostname: string): boolean {
   const [a, b] = parts;
   return a === 10 || a === 127 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168);
 }
-
 function isPrivateHostname(hostname: string): boolean {
   const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
   return host === 'localhost' || host === '::1' || host.endsWith('.local') || isPrivateIpv4(host);
 }
-
 function ensureOpenAiBaseUrl(value: string): string {
   const trimmed = value.trim().replace(/\/+$/, '');
   if (!trimmed) throw new Error('GOALMIND_LLM_BASE_URL is empty.');
@@ -53,29 +34,40 @@ function ensureOpenAiBaseUrl(value: string): string {
   if (isPrivateHostname(host) && !isLoopback) throw new Error('External LLM endpoint must not target private or link-local networks. Use an authenticated HTTPS gateway.');
   return trimmed.endsWith('/v1') ? trimmed : `${trimmed}/v1`;
 }
-
-function parseBoolean(value: string | undefined): boolean {
-  return /^(1|true|yes|on)$/i.test(String(value || '').trim());
-}
-
+function parseBoolean(value: string | undefined): boolean { return /^(1|true|yes|on)$/i.test(String(value || '').trim()); }
 function assertJsonContentType(value: string | null): void {
-  if (!value || !/^application\/(?:[a-z0-9.+-]*\+)?json(?:\s*;|$)/i.test(value)) {
-    throw new Error('External LLM returned a non-JSON response.');
-  }
+  if (!value || !/^application\/(?:[a-z0-9.+-]*\+)?json(?:\s*;|$)/i.test(value)) throw new Error('External LLM returned a non-JSON response.');
 }
-
 function assertSafeContentLength(value: string | null): void {
   if (!value) return;
   const bytes = Number(value);
   if (Number.isFinite(bytes) && bytes > MAX_RESPONSE_BYTES) throw new Error('External LLM response is too large.');
 }
-
+async function readJsonBodyWithLimit(response: Response): Promise<ChatCompletionResponse> {
+  const reader = response.body?.getReader();
+  if (!reader) {
+    const text = await response.text();
+    if (new TextEncoder().encode(text).byteLength > MAX_RESPONSE_BYTES) throw new Error('External LLM response is too large.');
+    try { return JSON.parse(text) as ChatCompletionResponse; } catch { throw new Error('External LLM returned invalid JSON.'); }
+  }
+  const decoder = new TextDecoder();
+  let bytes = 0;
+  let text = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    bytes += value.byteLength;
+    if (bytes > MAX_RESPONSE_BYTES) { await reader.cancel(); throw new Error('External LLM response is too large.'); }
+    text += decoder.decode(value, { stream: true });
+  }
+  text += decoder.decode();
+  try { return JSON.parse(text) as ChatCompletionResponse; } catch { throw new Error('External LLM returned invalid JSON.'); }
+}
 async function readOptionalSecret(name: string, names: string[]): Promise<string | undefined> {
   if (!names.includes(name)) return undefined;
   const value = await secrets.readSecret(name);
   return value.trim() || undefined;
 }
-
 async function readExternalConfig(): Promise<ExternalLlmConfig | null> {
   const names = await secrets.listSecretNames();
   if (!names.includes(BASE_URL_SECRET)) return null;
@@ -85,18 +77,11 @@ async function readExternalConfig(): Promise<ExternalLlmConfig | null> {
   const paidFallbackAllowed = parseBoolean(await readOptionalSecret(PAID_FALLBACK_SECRET, names));
   return { baseUrl: ensureOpenAiBaseUrl(rawBaseUrl), model, apiKey, paidFallbackAllowed };
 }
-
 export async function getExternalLlmStatus(): Promise<ExternalLlmStatus> {
   const config = await readExternalConfig();
   return { configured: Boolean(config), provider: 'openai-compatible', paidFallbackAllowed: config?.paidFallbackAllowed || false };
 }
-
-export async function generateExternalChatReply(input: {
-  system: string;
-  messages: LlmChatMessage[];
-  maxTokens?: number;
-  temperature?: number;
-}): Promise<{ text: string; paidFallbackAllowed: boolean } | null> {
+export async function generateExternalChatReply(input: { system: string; messages: LlmChatMessage[]; maxTokens?: number; temperature?: number }): Promise<{ text: string; paidFallbackAllowed: boolean } | null> {
   const config = await readExternalConfig();
   if (!config) return null;
   const controller = new AbortController();
@@ -105,25 +90,16 @@ export async function generateExternalChatReply(input: {
     const response = await fetch(`${config.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}) },
-      body: JSON.stringify({
-        model: config.model,
-        messages: [{ role: 'system', content: input.system }, ...input.messages.map(message => ({ role: message.role, content: message.content }))],
-        stream: false,
-        temperature: Math.max(0, Math.min(1.5, Number(input.temperature) || 0.35)),
-        max_tokens: Math.max(64, Math.min(2048, Math.floor(Number(input.maxTokens) || 700))),
-      }),
+      body: JSON.stringify({ model: config.model, messages: [{ role: 'system', content: input.system }, ...input.messages.map(message => ({ role: message.role, content: message.content }))], stream: false, temperature: Math.max(0, Math.min(1.5, Number(input.temperature) || 0.35)), max_tokens: Math.max(64, Math.min(2048, Math.floor(Number(input.maxTokens) || 700))) }),
       signal: controller.signal,
     });
     if (!response.ok) throw new Error(`External LLM returned HTTP ${response.status}.`);
     assertJsonContentType(response.headers.get('content-type'));
     assertSafeContentLength(response.headers.get('content-length'));
-    const payload = await response.json() as ChatCompletionResponse;
+    const payload = await readJsonBodyWithLimit(response);
     const text = String(payload.choices?.[0]?.message?.content || '').trim().slice(0, 8_000);
     if (!text) throw new Error('External LLM returned an empty completion.');
     return { text, paidFallbackAllowed: config.paidFallbackAllowed };
-  } finally {
-    clearTimeout(timeout);
-  }
+  } finally { clearTimeout(timeout); }
 }
-
-export const __test = { ensureOpenAiBaseUrl, isPrivateIpv4, isPrivateHostname, parseBoolean, assertJsonContentType, assertSafeContentLength, MAX_RESPONSE_BYTES };
+export const __test = { ensureOpenAiBaseUrl, isPrivateIpv4, isPrivateHostname, parseBoolean, assertJsonContentType, assertSafeContentLength, readJsonBodyWithLimit, MAX_RESPONSE_BYTES };
