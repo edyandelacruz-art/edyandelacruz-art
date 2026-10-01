@@ -11,6 +11,10 @@ const API_KEY_SECRET = 'GOALMIND_LLM_API_KEY';
 const PAID_FALLBACK_SECRET = 'GOALMIND_LLM_ALLOW_APPDEPLOY_FALLBACK';
 const DEFAULT_LOCAL_MODEL = 'qwen3:4b';
 const MAX_RESPONSE_BYTES = 1_000_000;
+const MAX_REQUEST_BYTES = 256_000;
+const MAX_SYSTEM_CHARS = 24_000;
+const MAX_MESSAGE_CHARS = 12_000;
+const MAX_MESSAGES = 48;
 
 function isPrivateIpv4(hostname: string): boolean {
   const parts = hostname.split('.').map(Number);
@@ -42,6 +46,27 @@ function assertSafeContentLength(value: string | null): void {
   if (!value) return;
   const bytes = Number(value);
   if (Number.isFinite(bytes) && bytes > MAX_RESPONSE_BYTES) throw new Error('External LLM response is too large.');
+}
+function normalizeRequest(input: { system: string; messages: LlmChatMessage[] }): { system: string; messages: LlmChatMessage[] } {
+  const system = String(input.system || '').trim();
+  if (!system) throw new Error('External LLM system prompt is empty.');
+  if (system.length > MAX_SYSTEM_CHARS) throw new Error('External LLM system prompt is too large.');
+  if (!Array.isArray(input.messages) || input.messages.length === 0) throw new Error('External LLM requires at least one message.');
+  if (input.messages.length > MAX_MESSAGES) throw new Error('External LLM conversation has too many messages.');
+  const messages = input.messages.map(message => {
+    if (message.role !== 'user' && message.role !== 'assistant') throw new Error('External LLM message role is invalid.');
+    const content = String(message.content || '').trim();
+    if (!content) throw new Error('External LLM message is empty.');
+    if (content.length > MAX_MESSAGE_CHARS) throw new Error('External LLM message is too large.');
+    return { role: message.role, content };
+  });
+  return { system, messages };
+}
+function buildRequestBody(input: { system: string; messages: LlmChatMessage[]; maxTokens?: number; temperature?: number }, model: string): string {
+  const normalized = normalizeRequest(input);
+  const body = JSON.stringify({ model, messages: [{ role: 'system', content: normalized.system }, ...normalized.messages], stream: false, temperature: Math.max(0, Math.min(1.5, Number(input.temperature) || 0.35)), max_tokens: Math.max(64, Math.min(2048, Math.floor(Number(input.maxTokens) || 700))) });
+  if (new TextEncoder().encode(body).byteLength > MAX_REQUEST_BYTES) throw new Error('External LLM request is too large.');
+  return body;
 }
 async function readJsonBodyWithLimit(response: Response): Promise<ChatCompletionResponse> {
   const reader = response.body?.getReader();
@@ -84,13 +109,14 @@ export async function getExternalLlmStatus(): Promise<ExternalLlmStatus> {
 export async function generateExternalChatReply(input: { system: string; messages: LlmChatMessage[]; maxTokens?: number; temperature?: number }): Promise<{ text: string; paidFallbackAllowed: boolean } | null> {
   const config = await readExternalConfig();
   if (!config) return null;
+  const body = buildRequestBody(input, config.model);
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60_000);
   try {
     const response = await fetch(`${config.baseUrl}/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json', ...(config.apiKey ? { Authorization: `Bearer ${config.apiKey}` } : {}) },
-      body: JSON.stringify({ model: config.model, messages: [{ role: 'system', content: input.system }, ...input.messages.map(message => ({ role: message.role, content: message.content }))], stream: false, temperature: Math.max(0, Math.min(1.5, Number(input.temperature) || 0.35)), max_tokens: Math.max(64, Math.min(2048, Math.floor(Number(input.maxTokens) || 700))) }),
+      body,
       signal: controller.signal,
     });
     if (!response.ok) throw new Error(`External LLM returned HTTP ${response.status}.`);
@@ -102,4 +128,4 @@ export async function generateExternalChatReply(input: { system: string; message
     return { text, paidFallbackAllowed: config.paidFallbackAllowed };
   } finally { clearTimeout(timeout); }
 }
-export const __test = { ensureOpenAiBaseUrl, isPrivateIpv4, isPrivateHostname, parseBoolean, assertJsonContentType, assertSafeContentLength, readJsonBodyWithLimit, MAX_RESPONSE_BYTES };
+export const __test = { ensureOpenAiBaseUrl, isPrivateIpv4, isPrivateHostname, parseBoolean, assertJsonContentType, assertSafeContentLength, normalizeRequest, buildRequestBody, readJsonBodyWithLimit, MAX_RESPONSE_BYTES, MAX_REQUEST_BYTES, MAX_SYSTEM_CHARS, MAX_MESSAGE_CHARS, MAX_MESSAGES };
