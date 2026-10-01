@@ -32,16 +32,34 @@ const API_KEY_SECRET = 'GOALMIND_LLM_API_KEY';
 const PAID_FALLBACK_SECRET = 'GOALMIND_LLM_ALLOW_APPDEPLOY_FALLBACK';
 const DEFAULT_LOCAL_MODEL = 'qwen3:4b';
 
+function isPrivateIpv4(hostname: string): boolean {
+  const parts = hostname.split('.').map(Number);
+  if (parts.length !== 4 || parts.some(part => !Number.isInteger(part) || part < 0 || part > 255)) return false;
+  const [a, b] = parts;
+  return a === 10 || a === 127 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168);
+}
+
+function isPrivateHostname(hostname: string): boolean {
+  const host = hostname.toLowerCase().replace(/^\[|\]$/g, '');
+  return host === 'localhost' || host === '::1' || host.endsWith('.local') || isPrivateIpv4(host);
+}
+
 function ensureOpenAiBaseUrl(value: string): string {
   const trimmed = value.trim().replace(/\/+$/, '');
   if (!trimmed) throw new Error('GOALMIND_LLM_BASE_URL is empty.');
 
   const parsed = new URL(trimmed);
-  const isLocal = parsed.hostname === 'localhost' || parsed.hostname === '127.0.0.1' || parsed.hostname === '::1';
-  if (parsed.protocol !== 'https:' && !(parsed.protocol === 'http:' && isLocal)) {
+  const host = parsed.hostname.toLowerCase();
+  const isLoopback = host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]';
+
+  if (parsed.protocol !== 'https:' && !(parsed.protocol === 'http:' && isLoopback)) {
     throw new Error('External LLM endpoint must use HTTPS unless it is localhost.');
   }
   if (parsed.username || parsed.password) throw new Error('Do not embed credentials in GOALMIND_LLM_BASE_URL.');
+  if (parsed.hash || parsed.search) throw new Error('GOALMIND_LLM_BASE_URL must not contain query parameters or fragments.');
+  if (isPrivateHostname(host) && !isLoopback) {
+    throw new Error('External LLM endpoint must not target private or link-local networks. Use an authenticated HTTPS gateway.');
+  }
 
   return trimmed.endsWith('/v1') ? trimmed : `${trimmed}/v1`;
 }
@@ -130,5 +148,7 @@ export async function generateExternalChatReply(input: {
 
 export const __test = {
   ensureOpenAiBaseUrl,
+  isPrivateIpv4,
+  isPrivateHostname,
   parseBoolean,
 };
