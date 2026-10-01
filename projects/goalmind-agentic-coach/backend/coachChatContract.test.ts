@@ -1,3 +1,4 @@
+import { test } from 'vitest';
 import {
   conversationKey,
   idempotencyKey,
@@ -32,25 +33,12 @@ export function runCoachChatContractTests() {
   assert(normalizeOpaqueId(guestA) === guestA, 'valid opaque id must survive normalization');
   assert(normalizeOpaqueId('short') === '', 'short ids must be rejected');
   assert(normalizeOpaqueId('../guest_123456789012') === '', 'path-like ids must be rejected');
-
-  assert(
-    conversationKey(guestA, conversationId) !== conversationKey(guestB, conversationId),
-    'conversation storage must be isolated by guest',
-  );
-  assert(
-    idempotencyKey(guestA, requestId) === idempotencyKey(guestA, requestId),
-    'same request id must resolve to the same idempotency key',
-  );
-  assert(
-    idempotencyKey(guestA, requestId) !== idempotencyKey(guestB, requestId),
-    'idempotency keys must be isolated by guest',
-  );
+  assert(conversationKey(guestA, conversationId) !== conversationKey(guestB, conversationId), 'conversation storage must be isolated by guest');
+  assert(idempotencyKey(guestA, requestId) === idempotencyKey(guestA, requestId), 'same request id must resolve to the same idempotency key');
+  assert(idempotencyKey(guestA, requestId) !== idempotencyKey(guestB, requestId), 'idempotency keys must be isolated by guest');
 
   const dirty = `  Hola\u0000   Coach,   quiero   practicar   cinemática.  `;
-  assert(
-    normalizeCoachMessage(dirty) === 'Hola Coach, quiero practicar cinemática.',
-    'messages must remove NULs and collapse whitespace',
-  );
+  assert(normalizeCoachMessage(dirty) === 'Hola Coach, quiero practicar cinemática.', 'messages must remove NULs and collapse whitespace');
   assert(normalizeCoachMessage('x'.repeat(2000)).length === 1600, 'messages must be bounded');
 
   const messages = Array.from({ length: 30 }, (_, index) => message(index));
@@ -79,6 +67,10 @@ export function runCoachChatContractTests() {
   assert(publicView.messages[23].content === 'turn-29', 'public view must retain the latest message');
   assert(!('guestId' in publicView), 'public view must not leak guest identity');
   assert(!('createdAt' in publicView), 'public view must not expose internal creation metadata');
-
   return { passed: 18 };
 }
+
+test('coach chat contract invariants', () => {
+  const result = runCoachChatContractTests();
+  assert(result.passed === 18, 'all contract invariants must execute');
+});
