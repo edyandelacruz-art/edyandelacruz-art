@@ -1,0 +1,17 @@
+{
+  "name": "goalmind-agentic-coach",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run backend/*.test.ts",
+    "test:cost-boundary": "vitest run backend/inferencePolicy.test.ts backend/inferenceRouter.test.ts backend/inferenceEndpointAdapter.test.ts backend/llmProvider.test.ts",
+    "verify": "npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
