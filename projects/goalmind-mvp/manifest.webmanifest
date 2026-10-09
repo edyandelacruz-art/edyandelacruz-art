@@ -1,0 +1,10 @@
+{
+  "name":"GoalMind — Learn • Shoot • Score",
+  "short_name":"GoalMind",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#06101a",
+  "theme_color":"#07111d",
+  "description":"Juego educativo de preguntas convertidas en tiros al arco.",
+  "icons":[]
+}
