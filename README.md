@@ -21,8 +21,6 @@
 
 ## About
 
-> **Professional profile (2026):** [Skills, experience, case studies and training](./PROFESSIONAL_PROFILE_2026.md) — AI-native product direction and multi-agent architecture, with clearly stated delivery scope.
-
 
 I am **Edyan Enrique de la Cruz**, an applied AI developer, educator, and technology builder working across software engineering, computational science, automation, and educational technology.
 
